@@ -39,6 +39,7 @@ const loginWithGoogle = async (res, idToken) => {
         avatar: ggUser.picture,
       });
     user = user.dataValues;
+    
     delete user.googleId;
     delete user.facebookId;
     // send jwt

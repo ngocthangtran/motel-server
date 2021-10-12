@@ -21,7 +21,7 @@ const upload = multer({
 router.post(
   '/',
   [
-    auth,
+    // auth,
     upload.array('images', MAX_IMAGE_COUNT),
     imageResize,
     validateRoomTypeId,

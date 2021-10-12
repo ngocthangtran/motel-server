@@ -28,8 +28,12 @@ const setAssociations = ({
   User.hasMany(Post, { foreignKey: 'userId' });
 
   // Post - PostImage
-  Post.hasMany(PostImage, { foreignKey: 'postId,', as: 'postImages' });
+  Post.hasMany(PostImage, { foreignKey: 'postId', as: 'postImages' });
   PostImage.belongsTo(Post, { foreignKey: 'postId' });
+
+  //Post - ward
+  Ward.hasMany(Post, { foreignKey: 'wardId' })
+  Post.belongsTo(Ward, { foreignKey: "wardId" })
 
   // Province - District - Ward
   Province.hasMany(District, { foreignKey: 'provinceId' });

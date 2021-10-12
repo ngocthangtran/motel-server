@@ -22,20 +22,12 @@ module.exports = sequelize => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    districtId: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     wardId: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     addrDetails: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-    area: {
-      type: DataTypes.FLOAT,
       allowNull: false,
     },
     price: {
@@ -80,6 +72,7 @@ module.exports = sequelize => {
       },
     },
   });
+  
   Post.prototype.toJSON = function () {
     var values = Object.assign({}, this.get());
 

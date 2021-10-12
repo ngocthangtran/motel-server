@@ -16,6 +16,8 @@ const createPost = async (req, res) => {
     postType,
     roomTypeId,
     utilityIds,
+    provinceId,
+    districtId
   } = req.body;
 
   const images = req.images.map(i => {
@@ -25,7 +27,8 @@ const createPost = async (req, res) => {
   try {
     const post = await Post.create(
       {
-        userId: req.user.userId,
+        // userId: req.user.userId,
+        userId: "e493adc1-cd37-4055-a965-b0cecede3373",
         title,
         address,
         area,
@@ -38,6 +41,8 @@ const createPost = async (req, res) => {
         postType,
         roomTypeId,
         postImages: images,
+        provinceId,
+        districtId
       },
       { include: ['postImages'] }
     );
@@ -50,7 +55,7 @@ const createPost = async (req, res) => {
   }
 };
 
-const getAllPosts = async (req, res) => {};
+const getAllPosts = async (req, res) => { };
 
 const getMainPosts = async (req, res) => {
   const clauses = {
