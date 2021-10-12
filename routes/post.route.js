@@ -10,6 +10,8 @@ const multer = require('multer');
 const imageResize = require('../middleware/imageResize');
 const { validateRoomTypeId } = require('../middleware/validate/roomType');
 const { validateUtilityIds } = require('../middleware/validate/utility');
+const { validateProvinceId } = require('../middleware/validate/provinces');
+const { validateWardId } = require('../middleware/validate/ward');
 
 const MAX_IMAGE_COUNT = 6;
 
@@ -26,6 +28,8 @@ router.post(
     imageResize,
     validateRoomTypeId,
     validateUtilityIds,
+    validateProvinceId,
+    validateWardId
   ],
   (req, res) => {
     createPost(req, res);

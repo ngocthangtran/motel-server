@@ -4,7 +4,7 @@ RENDER DATA UI
 +Get provinces
     GET: localhost:7777/ui/roomtype
 +Get districts
-    GET: localhost:7777/ui/districts/:provinceId
+    GET: localhost:7777/ui/districtzs/:provinceId
 +Get ward
     GET: localhost:7777/ui/ward/:districtId
 
@@ -14,3 +14,27 @@ RENDER DATA UI
 
 *** utilities
     GET: localhost:7777/ui/utilities
+
+ROUTER POST
+
++Creat new post
+    POST: localhost:7777/posts
+    body:{
+        image,
+        title,
+        address,
+        price,
+        deposit,
+        waterCost,
+        electricityCost,
+        phone,
+        description,
+        postType,
+        roomTypeId,
+        utilityIds,//type arr
+        provinceId//de tim theo vung,
+        wardId,
+        area
+    }
++Get 10 new post for FOR_RENT and FOR_SHARE
+    POST: localhost:7777/posts/main

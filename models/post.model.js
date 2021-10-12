@@ -14,6 +14,13 @@ module.exports = sequelize => {
         isIn: [['FOR_RENT', 'FOR_SHARE']],
       },
     },
+    area: {
+      type: DataTypes.INTEGER
+    },
+    address: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     title: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -23,10 +30,6 @@ module.exports = sequelize => {
       allowNull: false,
     },
     wardId: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    addrDetails: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -53,7 +56,7 @@ module.exports = sequelize => {
         is: /(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/,
       },
     },
-    details: {
+    description: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -72,7 +75,7 @@ module.exports = sequelize => {
       },
     },
   });
-  
+
   Post.prototype.toJSON = function () {
     var values = Object.assign({}, this.get());
 

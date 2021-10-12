@@ -5,7 +5,6 @@ const validateRoomTypeId = async (req, res, next) => {
   const roomType = await RoomType.findByPk(roomTypeId);
 
   if (!roomType) {
-    console.log(roomType);
     console.log('Loi');
     return res
       .status(400)
