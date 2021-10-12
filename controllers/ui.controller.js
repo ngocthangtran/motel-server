@@ -1,4 +1,4 @@
-const { Province, District, Ward } = require('../db');
+const { Province, District, Ward, RoomType, Utility } = require('../db');
 
 const getProvinces = async (req, res) => {
     const provinces = await Province.findAll()
@@ -37,8 +37,29 @@ const getWards = (req, res) => {
         .catch(err => res.status(500).send(err))
 }
 
+const getRoomType = (req, res) => {
+    RoomType.findAll()
+        .then(data => {
+            if (data.length !== 0) {
+                return res.send(data)
+            }
+            return res.status(404).send({ message: "Cant't not find room type " })
+        })
+}
+
+const getUtilities = (req, res) => {
+    Utility.findAll()
+        .then(data => {
+            if (data.length !== 0) {
+                return res.send(data)
+            }
+            return res.status(404).send({ message: "Cant't not find utilities " })
+        })
+}
+
 module.exports = {
     getProvinces,
     getDistricts,
-    getWards
+    getWards, getRoomType,
+    getUtilities
 }

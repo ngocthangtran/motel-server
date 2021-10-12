@@ -1,0 +1,16 @@
+RENDER DATA UI 
+
+*** Address
++Get provinces
+    GET: localhost:7777/ui/roomtype
++Get districts
+    GET: localhost:7777/ui/districts/:provinceId
++Get ward
+    GET: localhost:7777/ui/ward/:districtId
+
+*** Room type
++Get room type
+    GET: localhost:7777/ui/roomtype
+
+*** utilities
+    GET: localhost:7777/ui/utilities
