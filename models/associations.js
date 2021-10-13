@@ -1,39 +1,39 @@
+const { User } = require(".");
+
 const setAssociations = ({
-  User,
-  Utility,
-  RoomType,
-  Post,
+
+  Room,
   PostImage,
+  Utility,
+  Building,
+  Ward,
+  RoomType,
   Province,
   District,
-  Ward,
+  User
 }) => {
   // Post - RoomType
-  Post.belongsTo(RoomType, { foreignKey: 'roomTypeId', as: 'roomType' });
-  RoomType.hasMany(Post, { foreignKey: 'roomTypeId' });
+  Room.belongsTo(RoomType, { foreignKey: 'roomTypeId', as: 'roomType' });
+  RoomType.hasMany(Room, { foreignKey: 'roomTypeId' });
 
   // Post - Utility
-  Post.belongsToMany(Utility, {
-    through: 'PostUtilities',
-    foreignKey: 'postId',
+  Room.belongsToMany(Utility, {
+    through: 'RoomUtilities',
+    foreignKey: 'roomId',
     as: 'utilities',
   });
-  Utility.belongsToMany(Post, {
-    through: 'PostUtilities',
+  Utility.belongsToMany(Room, {
+    through: 'RoomUtilities',
     foreignKey: 'utilityId',
   });
 
-  // Post - User
-  Post.belongsTo(User, { foreignKey: 'userId' });
-  User.hasMany(Post, { foreignKey: 'userId' });
+  // // Post - User
+  // Post.belongsTo(User, { foreignKey: 'userId' });
+  // User.hasMany(Post, { foreignKey: 'userId' });
 
   // Post - PostImage
-  Post.hasMany(PostImage, { foreignKey: 'postId', as: 'postImages' });
-  PostImage.belongsTo(Post, { foreignKey: 'postId' });
-
-  //Post - ward
-  Ward.hasMany(Post, { foreignKey: 'wardId' })
-  Post.belongsTo(Ward, { foreignKey: "wardId" })
+  Room.hasMany(PostImage, { foreignKey: 'roomId', as: 'postImages' });
+  PostImage.belongsTo(Room, { foreignKey: 'roomId' });
 
   // Province - District - Ward
   Province.hasMany(District, { foreignKey: 'provinceId' });
@@ -41,8 +41,19 @@ const setAssociations = ({
   District.hasMany(Ward, { foreignKey: 'districtId' });
   Ward.belongsTo(District, { foreignKey: 'districtId' });
 
-  // Post - Address
-  // Post.
+
+  //building - room
+  Building.hasMany(Room, { foreignKey: "buildingId" });
+  Room.belongsTo(Building, { foreignKey: "buildingId" })
+
+  //building - ward
+  Ward.hasMany(Building, { foreignKey: 'wardId' })
+  Building.belongsTo(Ward, { foreignKey: "wardId" });
+
+  //building - user
+
+  User.hasMany(Building, { foreignKey: "userId" });
+  Building.belongsTo(User, { foreignKey: 'userId' })
 };
 
 module.exports = { setAssociations };
