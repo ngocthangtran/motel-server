@@ -1,40 +1,30 @@
-RENDER DATA UI 
+***Building
 
-*** Address
-+Get provinces
-    GET: localhost:7777/ui/roomtype
-+Get districts
-    GET: localhost:7777/ui/districtzs/:provinceId
-+Get ward
-    GET: localhost:7777/ui/ward/:districtId
-
-*** Room type
-+Get room type
-    GET: localhost:7777/ui/roomtype
-
-*** utilities
-    GET: localhost:7777/ui/utilities
-
-ROUTER POST
-
-+Creat new post
-    POST: localhost:7777/posts
-    body:{
-        image,
-        title,
-        address,
-        price,
-        deposit,
-        waterCost,
-        electricityCost,
-        phone,
-        description,
-        postType,
-        roomTypeId,
-        utilityIds,//type arr
-        provinceId//de tim theo vung,
-        wardId,
-        area
+*create Building
+    * POST: localhost:7777/building/create
+    body{
+        "name": "Toàn nhà số 1 Phan đình phùng",
+        "address": "210A đường Lê Thị Trung",
+        "wardId": "00004",
+        "openTime": "06:00", tuy chon
+        "closeTime": "07:00",
     }
-+Get 10 new post for FOR_RENT and FOR_SHARE
-    POST: localhost:7777/posts/main
+*get building
+    * GET: localhost:7777/building
+
+*delete Building
+    * DELETE: localhost:7777/building/delete
+    body:{
+        "buildingId":"ecf19d58-1cdd-41d7-8ce3-104c1c06f0e9"
+    }
+
+*repaid building
+    * POST: localhost:7777/building/repair
+    body:{
+        Can sua cai nao thi them vao
+        // "buildingId": "87fe942a-fec7-4b2b-9731-bfd5395711f9",
+        // "name": "Sua lan 1"
+        // "address": null,
+        // "openTime": null,
+        // "closeTime": null
+    }

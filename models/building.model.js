@@ -9,14 +9,6 @@ module.exports = (sequelize) => {
                 defaultValue: DataTypes.UUIDV4,
                 primaryKey: true
             },
-            userId: {
-                type: DataTypes.UUID,
-                defaultValue: DataTypes.UUIDV4,
-            },
-            roomId: {
-                type: DataTypes.UUID,
-                defaultValue: DataTypes.UUIDV4
-            },
             name: {
                 type: DataTypes.STRING,
                 allowNull: false
@@ -27,9 +19,10 @@ module.exports = (sequelize) => {
             },
             openTime: {
                 type: DataTypes.TIME,
+                defaultData: DataTypes.TIME("06:00")
             },
             closeTime: {
-                type: DataTypes.TIME
+                type: DataTypes.TIME("23:00")
             },
             wardId: {
                 type: DataTypes.STRING,

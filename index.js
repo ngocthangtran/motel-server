@@ -4,6 +4,8 @@ const cors = require('cors');
 const authRouter = require('./routes/auth.route');
 const postRouter = require('./routes/post.route');
 const uiRouter = require('./routes/ui.route')
+const buildingRouter = require('./routes/building.router');
+
 const port = process.env.PORT || 7777;
 const app = express();
 
@@ -16,6 +18,7 @@ app.use(express.static('public'));
 app.use('/auth', authRouter);
 app.use('/posts', postRouter);
 app.use('/ui', uiRouter)
+app.use('/building', buildingRouter)
 
 app.listen(port, async () => {
   console.log(chalk.green(`server running at port ${port}`));

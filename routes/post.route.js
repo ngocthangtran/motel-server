@@ -24,15 +24,16 @@ router.post(
   '/',
   [
     // auth,
-    upload.array('images', MAX_IMAGE_COUNT),
-    imageResize,
-    validateRoomTypeId,
-    validateUtilityIds,
-    validateProvinceId,
-    validateWardId
+    // upload.array('images', MAX_IMAGE_COUNT),
+    // imageResize,
+    // validateRoomTypeId,
+    // validateUtilityIds,
+    // validateProvinceId,
+    // validateWardId
   ],
   (req, res) => {
-    createPost(req, res);
+    console.log(req.body)
+    // createPost(req, res);
   }
 );
 
