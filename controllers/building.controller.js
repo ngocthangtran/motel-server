@@ -20,7 +20,7 @@ const createBuilding = async (req, res) => {
 }
 
 const getBuilding = async (req, res) => {
-    const { userId } = res.user;
+    const { userId } = req.user;    
     try {
         const listBuilding = await Building.findAll(
             {
@@ -82,7 +82,7 @@ const deleteBulding = async (req, res) => {
 
 const repairBuilding = async (req, res) => {
     const {userId} = req.user;
-
+    // const userId = "e493adc1-cd37-4055-a965-b0cecede3373";
     const {
         buildingId,
         name,

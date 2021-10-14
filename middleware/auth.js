@@ -2,9 +2,7 @@ const chalk = require('chalk');
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
-  console.log(req);
   const token = req.header('x-auth-token');
-  console.log(JSON.stringify(token));
   if (!token)
     return res.status(401).send({ error: 'Access denied. No token provided.' });
 

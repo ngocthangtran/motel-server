@@ -17,6 +17,7 @@ const createRoom = async (req, res) => {
             name: i
         }
     });
+
     try {
         const room = await Room.create({
             buildingId,
@@ -24,7 +25,6 @@ const createRoom = async (req, res) => {
             area,
             deposit,
             price,
-
             roomTypeId,
             postImages: images
         }, {

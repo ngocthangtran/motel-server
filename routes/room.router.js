@@ -18,7 +18,7 @@ const upload = multer({
 router.post(
     '/create',
     [
-        // auth,
+        auth,
         upload.array('images', MAX_IMAGE_COUNT),
         imageResize,
         validateBuildId,
