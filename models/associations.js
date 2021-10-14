@@ -10,13 +10,14 @@ const setAssociations = ({
   RoomType,
   Province,
   District,
-  User
+  User,
+  Post
 }) => {
-  // Post - RoomType
+  // Room - RoomType
   Room.belongsTo(RoomType, { foreignKey: 'roomTypeId', as: 'roomType' });
   RoomType.hasMany(Room, { foreignKey: 'roomTypeId' });
 
-  // Post - Utility
+  // ROOM - Utility
   Room.belongsToMany(Utility, {
     through: 'RoomUtilities',
     foreignKey: 'roomId',
@@ -27,13 +28,13 @@ const setAssociations = ({
     foreignKey: 'utilityId',
   });
 
-  // // Post - User
-  // Post.belongsTo(User, { foreignKey: 'userId' });
-  // User.hasMany(Post, { foreignKey: 'userId' });
-
-  // Post - PostImage
+  // room - PostImage
   Room.hasMany(PostImage, { foreignKey: 'roomId', as: 'postImages' });
-  PostImage.belongsTo(Room, { foreignKey: 'roomId' });
+  PostImage.belongsTo(Room);
+
+  //room - post
+  Post.hasOne(Room, { foreignKey: "roomId" });
+  Room.belongsTo(Post, { foreignKey: "" })
 
   // Province - District - Ward
   Province.hasMany(District, { foreignKey: 'provinceId' });

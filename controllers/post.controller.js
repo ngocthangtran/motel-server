@@ -1,53 +1,38 @@
-const { sequelize, Post, Ward, Province, District } = require('../db');
+const { sequelize, Post, Ward, Province, District, Room } = require('../db');
 const { post } = require('../routes/post.route');
 const { Op } = require('sequelize');
 
 const createPost = async (req, res) => {
   const {
-    title,
-    address,
-    wardId,
-    price,
-    deposit,
-    waterCost,
-    electricityCost,
-    phone,
-    description,
+    roomId,
+    discription,
     postType,
-    roomTypeId,
-    utilityIds,
-    provinceId,
-    area
+    title,
+    phone,
+    latitude,
+    longitude
   } = req.body;
 
-  const images = req.images.map(i => {
-    return { name: i };
-  });
-
   try {
-    const post = await Post.create(
+    await Room.update({
+      status: true
+    },
       {
-        // userId: req.user.userId,
-        userId: "e493adc1-cd37-4055-a965-b0cecede3373",
-        title,
-        wardId,
-        area: parseInt(area),
-        address,
-        provinceId,
-        price,
-        deposit,
-        waterCost,
-        electricityCost,
-        phone,
-        postType,
-        roomTypeId,
-        postImages: images,
-        description,
-      },
-      { include: ['postImages'] }
-    );
-    await post.addUtilities(utilityIds);
-    res.send({ post });
+        where: {
+          roomId,
+        }
+      }
+    )
+    const post = await Post.create({
+      roomId,
+      discription,
+      postType,
+      title,
+      phone,
+      latitude,
+      longitude
+    })
+    res.send(post)
   } catch (error) {
     console.log(error);
     res.status(500).send({ error });

@@ -1,6 +1,5 @@
 const User = require('./user.model');
 const Utility = require('./utility.model');
-// const Post = require('./post.model');
 const RoomType = require('./roomType.model');
 const PostImage = require('./postImage.model');
 const Province = require('./province.model');
@@ -10,6 +9,7 @@ const Building = require('./building.model');
 const FeeBaseOn = require('./feeBaseOn.model');
 const Room = require('./room.model');
 const Services = require('./services.model')
+const Post = require('./post.model')
 
 module.exports = {
   User,
@@ -22,5 +22,6 @@ module.exports = {
   Building,
   Room,
   FeeBaseOn,
-  Services
+  Services,
+  Post
 };

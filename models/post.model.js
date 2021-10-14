@@ -14,39 +14,8 @@ module.exports = sequelize => {
         isIn: [['FOR_RENT', 'FOR_SHARE']],
       },
     },
-    area: {
-      type: DataTypes.INTEGER
-    },
-    address: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
     title: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-    provinceId: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    wardId: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    price: {
-      type: DataTypes.DECIMAL(12, 2),
-      allowNull: false,
-    },
-    deposit: {
-      type: DataTypes.DECIMAL(12, 2),
-      allowNull: false,
-    },
-    waterCost: {
-      type: DataTypes.DECIMAL(8, 2),
-      allowNull: false,
-    },
-    electricityCost: {
-      type: DataTypes.DECIMAL(8, 2),
       allowNull: false,
     },
     phone: {

@@ -7,7 +7,7 @@ const { validateWardId } = require('../middleware/validate/ward')
 
 router.post('/create',
     [
-        // auth,
+        auth,
         validateWardId
     ],
     (req, res) => {
@@ -17,7 +17,7 @@ router.post('/create',
 
 router.get('/',
     [
-        // auth
+        auth
     ],
     (req, res) => {
         getBuilding(req, res)
@@ -26,7 +26,7 @@ router.get('/',
 
 router.delete('/delete',
     [
-        // auth
+        auth
     ],
     (req, res) => {
         deleteBulding(req, res)
@@ -34,7 +34,9 @@ router.delete('/delete',
 )
 
 router.post('/repair',
-    [],
+    [
+        auth
+    ],
     (req, res) => {
         repairBuilding(req, res)
     }

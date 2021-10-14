@@ -28,3 +28,18 @@
         // "openTime": null,
         // "closeTime": null
     }
+
+*** Room
+
+8 create room 
+    *POST: localhost:7777/room/create
+    formdata:{
+        images//arr,
+        buildingId,
+        area,
+        name,
+        deposit,
+        price,
+        roomTypeId,
+        utilityIds//arr
+    }

@@ -9,8 +9,7 @@ const createBuilding = async (req, res) => {
         wardId
     } = req.body;
     const building = await Building.create({
-        // userId: req.user.userId
-        userId: "e493adc1-cd37-4055-a965-b0cecede3373",
+        userId: req.user.userId,
         name,
         address,
         openTime,
@@ -21,14 +20,13 @@ const createBuilding = async (req, res) => {
 }
 
 const getBuilding = async (req, res) => {
-    // const { userId } = res.user;
-    const userId = "e493adc1-cd37-4055-a965-b0cecede3373";
+    const { userId } = res.user;
     try {
         const listBuilding = await Building.findAll(
             {
                 attributes: ['buildingId', 'name', "address"],
                 where: {
-                    // userId
+                    userId
                 },
                 include: [{
                     model: Ward,
@@ -63,8 +61,7 @@ const getBuilding = async (req, res) => {
 }
 
 const deleteBulding = async (req, res) => {
-    // const { userId } = req.user;
-    const userId = "e493adc1-cd37-4055-a965-b0cecede3373";
+    const { userId } = req.user;
     const { buildingId } = req.body;
 
     try {
@@ -84,8 +81,8 @@ const deleteBulding = async (req, res) => {
 }
 
 const repairBuilding = async (req, res) => {
-    // const {userId} = req.user;
-    const userId = "e493adc1-cd37-4055-a965-b0cecede3373";
+    const {userId} = req.user;
+
     const {
         buildingId,
         name,
