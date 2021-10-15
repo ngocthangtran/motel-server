@@ -1,5 +1,4 @@
-const { sequelize, PostImage, Post, Ward, Province, District, Room, Building } = require('../db');
-const { post } = require('../routes/post.route');
+const { User, sequelize, PostImage, Post, Ward, Province, District, Room, Building } = require('../db');
 const { Op } = require('sequelize');
 
 const createPost = async (req, res) => {
@@ -101,117 +100,72 @@ const getNewPost = async (req, res) => {
       url: `${process.env.BASE_URL}/assets/${nameImage}_full.jpg`,
       thumbUrl: `${process.env.BASE_URL}/assets/${nameImage}_thumb.jpg`,
     }
-    const { postId, title, price } = postData.dataValues
+    const { postId, title, price, postType } = postData.dataValues
     const { Ward: ward, address } = Building.dataValues;
 
-
-    // const { postId, postType, price, area, address, Ward: ward, title, postImages } = item.dataValues
-    // const { name: nameImage } = postImages[0].dataValues;
-    // const linkImage = {
-    //   url: `${process.env.BASE_URL}/assets/${nameImage}_full.jpg`,
-    //   thumbUrl: `${process.env.BASE_URL}/assets/${nameImage}_thumb.jpg`,
-    // };
-    // const { name, District: district } = ward
     return {
-      postId, title, price, area, linkImage,
+      postId, title, postType, price, area, linkImage,
       address: `${address}, ${ward.name}, ${ward.District.name}, ${ward.District.Province.name}`
     }
   }, {})
-
-  // console.log(post)
   res.send({ FOR_RENT: converData(FOR_RENT), FOR_SHARE: converData(FOR_SHARE) })
 };
 
-// const getMainPosts = async (req, res) => {
+const viewPost = async (req, res) => {
+  const { postId } = req.params
+  const room = await Room.findAll({
+    attributes: ["area"],
+    include: ['postImages', 'utilities',
+      {
+        model: Post,
+        where: {
+          postId
+        }
+      },
+      {
+        model: Building,
+        include: [{
+          model: Ward,
+          include: {
+            model: District,
+            include: Province
+          }
+        }, {
+          model: User
+        }]
+      }
+    ],
 
-//   const clauses = {
-//     joinTableAttributes: [],
-//     include: ['postImages', {
-//       model: Ward,
-//       include: {
-//         model: District,
-//         include: {
-//           model: Province
-//         }
-//       }
-//     }],
-//     order: [['createdAt', 'DESC']],
-//     offset: 0,
-//     limit: 10,
-//   };
-//   try {
+  })
+  const converData = data => {
+    const { area, postImages, utilities: dv, Post: post, Building: building } = data[0].dataValues;
 
-//     var FOR_RENT = await Post.findAll({
-//       where: {
-//         postType: 'FOR_RENT'
-//       },
-//       attributes: ['postId', 'postType', "title", "price", "area", 'address', 'wardId', 'createdAt'],
-//       ...clauses
-//     })
+    const represent = building.User.name
 
-//     const FOR_SHARE = await Post.findAll({
-//       where: {
-//         postType: 'FOR_SHARE'
-//       },
-//       attributes: ['postId', 'postType', "title", "price", "area", 'address', 'wardId', 'createdAt'],
-//       ...clauses
-//     })
+    const address = `${building.address}, ${building.Ward.name} - ${building.Ward.District.name}, ${building.Ward.District.Province.name}`
 
-//     const converData = data => data.map(item => {
-//       const { postId, postType, price, area, address, Ward: ward, title, postImages } = item.dataValues
-//       const { name: nameImage } = postImages[0].dataValues;
-//       const linkImage = {
-//         url: `${process.env.BASE_URL}/assets/${nameImage}_full.jpg`,
-//         thumbUrl: `${process.env.BASE_URL}/assets/${nameImage}_thumb.jpg`,
-//       };
-//       const { name, District: district } = ward
-//       return {
-//         postId, title, postType, price, area, linkImage,
-//         address: `${address}, ${name}, ${district.name}, ${district.Province.name}`
-//       }
-//     }, {})
+    const { title, price, phone, description } = post;
 
-//     res.send({
-//       FOR_RENT: converData(FOR_RENT), FOR_SHARE: converData(FOR_SHARE)
-//     })
-//     // const newPosts = await Post.findAll({
-//     //   order: [['updatedAt', 'DESC']],
-//     //   attributes: ['postId', 'postType', "price", "area", 'address', 'wardId', 'updatedAt'],
-//     //   ...clauses,
-//     // });
-//     // const wardId = newPosts.map(post => post.wardId)
-//     // const address = await Ward.findAll(
-//     //   {
-//     //     include: [{
-//     //       model: District,
-//     //       include: {
-//     //         model: Province
-//     //       }
-//     //     }],
-//     //     where: {
-//     //       // wardId: "00001"
-//     //       wardId: { [Op.or]: wardId }
-//     //     }
-//     //   }
-//     // )
+    const images = postImages.map(item => {
+      const { name } = item
+      return {
+        url: `${process.env.BASE_URL}/assets/${name}_full.jpg`,
+        thumbUrl: `${process.env.BASE_URL}/assets/${name}_thumb.jpg`,
+      }
+    })
+    const utilities = dv.map(item => {
+      const { name, icon } = item
+      return {
+        name, icon
+      }
+    })
+    return {
+      title, price, area, represent, phone, address, description,
+      images, utilities,
+    }
+  }
 
-//     // console.log(address)
+  res.send(converData(room))
+}
 
-
-//     // res.send(newPosts)
-//     // const newPostIds = newPosts.map(np => np.postId);
-//     // const forRentPosts = await Post.findAll({
-//     //   where: { postType: 'FOR_RENT', postId: { [Op.notIn]: newPostIds } },
-//     //   ...clauses,
-//     // });
-//     // const forSharePosts = await Post.findAll({
-//     //   where: { postType: 'FOR_SHARE', postId: { [Op.notIn]: newPostIds } },
-//     //   ...clauses,
-//     // });
-//     // res.send({ newPosts, forRentPosts, forSharePosts });
-//   } catch (error) {
-//     res.status(500).send({ error });
-//   }
-// };
-
-module.exports = { createPost, getNewPost };
+module.exports = { createPost, getNewPost, viewPost };
