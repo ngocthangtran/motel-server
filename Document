@@ -2,6 +2,7 @@
 
 *create Building
     * POST: localhost:7777/building/create
+    auth:true
     body{
         "name": "Toàn nhà số 1 Phan đình phùng",
         "address": "210A đường Lê Thị Trung",
@@ -10,15 +11,18 @@
         "closeTime": "07:00",
     }
 *get building
+    auth:true
     * GET: localhost:7777/building
 
 *delete Building
+    auth:true
     * DELETE: localhost:7777/building/delete
     body:{
         "buildingId":"ecf19d58-1cdd-41d7-8ce3-104c1c06f0e9"
     }
 
 *repaid building
+    auth:true
     * POST: localhost:7777/building/repair
     body:{
         Can sua cai nao thi them vao
@@ -31,7 +35,8 @@
 
 *** Room
 
-8 create room 
+* create room
+    auth:true
     *POST: localhost:7777/room/create
     formdata:{
         images//arr,
@@ -43,3 +48,26 @@
         roomTypeId,
         utilityIds//arr
     }
+
+*** Post
+
+*create Post
+    auth:true
+    *POST: localhost:7777/posts
+    body:{
+        "roomId":"89350f77-3862-4d9a-a0c7-20a81cd7996a",
+        "description":"day la mot ngoi nha lon",
+        "postType":"FOR_RENT",
+        "title":"Day la la la caim lon",
+        "phone":"0986173774",
+        "price":"1000000",
+        "latitude"
+        "longitude"
+    }
+*get new post 
+    auth:false
+    *GET: localhost:7777/posts/main
+
+*get a post 
+    auth:false
+    *GET: localhost:7777/posts/viewpost/:postId
