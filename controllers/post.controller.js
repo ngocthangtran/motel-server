@@ -1,5 +1,21 @@
-const { User, sequelize, PostImage, Post, Ward, Province, District, Room, Building } = require('../db');
+const { User, Posts, Ward, Province, PostImage, District, Room, Building, RoomType } = require('../db');
 const { Op } = require('sequelize');
+
+const converData = data => data.map(item => {
+  const { area, postImages, Post: postData, Building } = item.dataValues
+  const { name: nameImage } = postImages[0].dataValues;
+  const linkImage = {
+    url: `${process.env.BASE_URL}/assets/${nameImage}_full.jpg`,
+    thumbUrl: `${process.env.BASE_URL}/assets/${nameImage}_thumb.jpg`,
+  }
+  const { postId, title, price, postType, description } = postData.dataValues
+  const { Ward: ward, address } = Building.dataValues;
+
+  return {
+    postId, title, postType, price, area, description, linkImage,
+    address: `${address}, ${ward.name}, ${ward.District.name}, ${ward.District.Province.name}`
+  }
+}, {})
 
 const createPost = async (req, res) => {
   const {
@@ -23,7 +39,7 @@ const createPost = async (req, res) => {
         }
       }
     )
-    const post = await Post.create({
+    const posts = await Posts.create({
       roomId,
       price,
       description,
@@ -33,7 +49,7 @@ const createPost = async (req, res) => {
       latitude,
       longitude
     })
-    res.send(post.dataValues)
+    res.send(posts.dataValues)
   } catch (error) {
     console.log(error);
     res.status(500).send({ error });
@@ -44,7 +60,7 @@ const getNewPost = async (req, res) => {
   const FOR_RENT_clauses = {
     joinTableAttributes: [],
     include: ["postImages", {
-      model: Post,
+      model: Posts,
       where: {
         postType: "FOR_RENT"
       }
@@ -66,7 +82,7 @@ const getNewPost = async (req, res) => {
   const FOR_SHARE_clauses = {
     joinTableAttributes: [],
     include: ["postImages", {
-      model: Post,
+      model: Posts,
       where: {
         postType: "FOR_SHARE"
       }
@@ -93,21 +109,7 @@ const getNewPost = async (req, res) => {
     ...FOR_SHARE_clauses
   })
 
-  const converData = data => data.map(item => {
-    const { area, postImages, Post: postData, Building } = item.dataValues
-    const { name: nameImage } = postImages[0].dataValues;
-    const linkImage = {
-      url: `${process.env.BASE_URL}/assets/${nameImage}_full.jpg`,
-      thumbUrl: `${process.env.BASE_URL}/assets/${nameImage}_thumb.jpg`,
-    }
-    const { postId, title, price, postType } = postData.dataValues
-    const { Ward: ward, address } = Building.dataValues;
 
-    return {
-      postId, title, postType, price, area, linkImage,
-      address: `${address}, ${ward.name}, ${ward.District.name}, ${ward.District.Province.name}`
-    }
-  }, {})
   res.send({ FOR_RENT: converData(FOR_RENT), FOR_SHARE: converData(FOR_SHARE) })
 };
 
@@ -117,7 +119,7 @@ const viewPost = async (req, res) => {
     attributes: ["area"],
     include: ['postImages', 'utilities',
       {
-        model: Post,
+        model: Posts,
         where: {
           postId
         }
@@ -133,12 +135,12 @@ const viewPost = async (req, res) => {
         }, {
           model: User
         }]
-      }
+      }, 'roomType'
     ],
 
   })
   const converData = data => {
-    const { area, postImages, utilities: dv, Post: post, Building: building } = data[0].dataValues;
+    const { area, postImages, utilities: dv, Post: post, Building: building, roomType } = data[0].dataValues;
 
     const represent = building.User.name
 
@@ -160,7 +162,7 @@ const viewPost = async (req, res) => {
       }
     })
     return {
-      title, price, area, represent, phone, address, description,
+      title, price, area, represent, phone, address, description, roomType: roomType.dataValues.name,
       images, utilities,
     }
   }
@@ -168,4 +170,88 @@ const viewPost = async (req, res) => {
   res.send(converData(room))
 }
 
-module.exports = { createPost, getNewPost, viewPost };
+const findAddress = async (req, res) => {
+  const { wardId, roomTypeId, postType, sort } = req.query;
+
+  try {
+    const room = await Room.findAll({
+      include: [
+        {
+          model: PostImage,
+          as: 'postImages'
+        },
+        {
+          model: Posts,
+          where: {
+            postType
+          },
+        },
+        {
+          model: Building,
+          where: {
+            wardId
+          },
+          include: {
+            model: Ward,
+            include: {
+              model: District,
+              include: Province
+            }
+          }
+        },
+        {
+          model: RoomType,
+          as: 'roomType',
+          where: {
+            roomTypeId
+          }
+        }
+      ],
+      where: {
+        status: true
+      },
+      order: [['createdAt', 'DESC']],
+      offset: 0,
+      limit: 10,
+    })
+    let data;
+
+    if (sort === 'SORT_DOWN') {
+
+      data = converData(room).sort((a, b) => {
+        if (a.price > b.price) {
+          return -1
+        }
+        return 0
+      })
+      res.send(data);
+      return
+    }
+    if (sort === 'SORT_UP') {
+      data = converData(room).sort((a, b) => {
+        if (a.price < b.price) {
+          return -1
+        }
+        return 0
+      })
+      res.send(data);
+      return;
+    }
+    data = converData(room)
+    res.send(data)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+
+
+}
+
+const filterPost = async (req, res) => {
+  console.log(req.query)
+}
+
+module.exports = {
+  createPost, getNewPost, viewPost,
+  findAddress,
+  filterPost
+};

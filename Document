@@ -51,6 +51,10 @@
 
 *** Post
 
+*suggestions address
+    auth:false
+    *GET: localhost:7777/suggestions/address?value=binhduong
+
 *create Post
     auth:true
     *POST: localhost:7777/posts
@@ -71,3 +75,20 @@
 *get a post 
     auth:false
     *GET: localhost:7777/posts/viewpost/:postId
+
+
+***Find_Post
+    *suggestions address
+    auth:false
+    *GET: localhost:7777/suggestions/address?value=binhduong
+
+    * find post address
+    auth: false
+    *GET: localhost:7777/posts/find?wardId=00006
+
+    * filter
+    auth: false
+    *GET: localhost:7777/posts/find?wardId=00004&postType=FOR_SHARE&roomTypeId=8ac8267f-c156-4628-bf80-52f9e1f3c6f4&sort=true
+    sort: SORT_UP - sắp xếp giá tiền từ bé đến lớn
+    sort: SORT_DOWN - sắp xếp giá tiền từ lớn đến bé
+    không có giá trị sort - lấy mới nhất

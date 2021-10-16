@@ -1,6 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth')
-const { createPost, getNewPost, viewPost } = require('../controllers/post.controller');
+const { createPost, getNewPost, viewPost, findAddress, filterPost } = require('../controllers/post.controller');
 const { validateRoomId } = require('../middleware/validate/room');
 const router = express.Router();
 
@@ -21,4 +21,9 @@ router.get('/main', (req, res) => {
 router.get('/viewpost/:postId', (req, res) => {
   viewPost(req, res)
 })
+
+router.get('/find', (req, res) => {
+  findAddress(req, res)
+})
+
 module.exports = router

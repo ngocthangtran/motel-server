@@ -9,7 +9,7 @@ const Building = require('./building.model');
 const FeeBaseOn = require('./feeBaseOn.model');
 const Room = require('./room.model');
 const Services = require('./services.model')
-const Post = require('./post.model')
+const Posts = require('./post.model')
 
 module.exports = {
   User,
@@ -23,5 +23,5 @@ module.exports = {
   Room,
   FeeBaseOn,
   Services,
-  Post
+  Posts
 };

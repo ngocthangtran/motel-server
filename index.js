@@ -6,6 +6,7 @@ const postRouter = require('./routes/post.route');
 const uiRouter = require('./routes/ui.route')
 const buildingRouter = require('./routes/building.router');
 const roomRouter = require('./routes/room.router')
+const suggestions = require('./routes/suggestions.router');
 
 const port = process.env.PORT || 7777;
 const app = express();
@@ -18,9 +19,10 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use('/auth', authRouter);
 app.use('/posts', postRouter);
-app.use('/ui', uiRouter)
-app.use('/building', buildingRouter)
-app.use('/room', roomRouter)
+app.use('/ui', uiRouter);
+app.use('/building', buildingRouter);
+app.use('/room', roomRouter);
+app.use('/suggestions', suggestions)
 
 app.listen(port, async () => {
   console.log(chalk.green(`server running at port ${port}`));

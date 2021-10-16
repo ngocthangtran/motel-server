@@ -1,4 +1,3 @@
-const { User } = require(".");
 
 const setAssociations = ({
 
@@ -11,7 +10,7 @@ const setAssociations = ({
   Province,
   District,
   User,
-  Post
+  Posts
 }) => {
   // Room - RoomType
   Room.belongsTo(RoomType, { foreignKey: 'roomTypeId', as: 'roomType' });
@@ -33,7 +32,7 @@ const setAssociations = ({
   PostImage.belongsTo(Room, { foreignKey: 'roomId' });
 
   //room - post
-  Room.hasOne(Post, { foreignKey: "roomId" })
+  Room.hasOne(Posts, { foreignKey: "roomId" })
 
   //building - room
   Building.hasMany(Room, { foreignKey: "buildingId" });

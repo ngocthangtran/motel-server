@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = sequelize => {
-  const Post = sequelize.define('Post', {
+  return sequelize.define('Posts', {
     postId: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -49,16 +49,4 @@ module.exports = sequelize => {
     },
   });
 
-  Post.prototype.toJSON = function () {
-    var values = Object.assign({}, this.get());
-
-    values['postImages'] = values['postImages'].map(img => {
-      return {
-        url: `${process.env.BASE_URL}/assets/${img.name}_full.jpg`,
-        thumbUrl: `${process.env.BASE_URL}/assets/${img.name}_thumb.jpg`,
-      };
-    });
-    return values;
-  };
-  return Post;
 };
