@@ -1,14 +1,29 @@
 const express = require('express');
 const auth = require('../middleware/auth')
 const { createPost, getNewPost, viewPost, findAddress, filterPost } = require('../controllers/post.controller');
-const { validateRoomId } = require('../middleware/validate/room');
+const { validateRoomTypeId } = require('../middleware/validate/roomType');
+const { validateWardId } = require('../middleware/validate/ward');
+const imageResize = require('../middleware/imageResize');
+const multer = require('multer');
+const { validateUtilityIds } = require('../middleware/validate/utility');
 const router = express.Router();
 
+
+const MAX_IMAGE_COUNT = 6;
+
+const upload = multer({
+  dest: 'uploads/',
+  limits: { fieldSize: 25 * 1024 * 1024 },
+});
 
 router.post('/',
   [
     auth,
-    validateRoomId
+    upload.array('images', MAX_IMAGE_COUNT),
+    imageResize,
+    validateRoomTypeId,
+    validateWardId,
+    validateUtilityIds
   ],
   (req, res) => {
     createPost(req, res)
@@ -22,8 +37,13 @@ router.get('/viewpost/:postId', (req, res) => {
   viewPost(req, res)
 })
 
-router.get('/find', (req, res) => {
-  findAddress(req, res)
-})
+router.get('/find',
+  [
+    validateWardId,
+    validateRoomTypeId
+  ]
+  , (req, res) => {
+    findAddress(req, res)
+  })
 
 module.exports = router

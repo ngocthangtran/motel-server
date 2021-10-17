@@ -1,7 +1,7 @@
 const { Ward } = require('../../db');
 
 const validateWardId = async (req, res, next) => {
-    const { wardId } = req.body;
+    const wardId = req.body.wardId || req.query.wardId;
     const ward = await Ward.findByPk(wardId);
 
     if (!ward) {

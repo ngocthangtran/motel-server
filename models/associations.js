@@ -27,13 +27,6 @@ const setAssociations = ({
     foreignKey: 'utilityId',
   });
 
-  // room - PostImage
-  Room.hasMany(PostImage, { foreignKey: 'roomId', as: 'postImages' });
-  PostImage.belongsTo(Room, { foreignKey: 'roomId' });
-
-  //room - post
-  Room.hasOne(Posts, { foreignKey: "roomId" })
-
   //building - room
   Building.hasMany(Room, { foreignKey: "buildingId" });
   Room.belongsTo(Building, { foreignKey: "buildingId" })
@@ -52,6 +45,35 @@ const setAssociations = ({
 
   User.hasMany(Building, { foreignKey: "userId" });
   Building.belongsTo(User, { foreignKey: 'userId' })
+
+  // ***Post
+  // posts - PostImage
+  Posts.hasMany(PostImage, { foreignKey: 'postId', as: 'postImages' });
+  PostImage.belongsTo(Room, { foreignKey: 'postId' });
+
+  // Post - wards
+  Ward.hasOne(Posts, { foreignKey: 'wardId' })
+  Posts.belongsTo(Ward, { foreignKey: 'wardId' })
+
+  // post - user
+  User.hasMany(Posts, { foreignKey: 'userId' });
+  Posts.belongsTo(User, { foreignKey: 'userId' });
+
+  // Post - Utilities
+  Posts.belongsToMany(Utility, {
+    through: "PostsUtilities",
+    foreignKey: 'postId',
+    as: 'postutilities'
+  })
+
+  Utility.belongsToMany(Posts, {
+    through: 'PostsUtilities',
+    foreignKey: 'utilityId'
+  })
+
+  // Post - Room type
+  Posts.belongsTo(RoomType, { foreignKey: 'roomTypeId', as: 'roomType' })
+  RoomType.hasMany(Posts, { foreignKey: 'roomTypeId' })
 };
 
 module.exports = { setAssociations };

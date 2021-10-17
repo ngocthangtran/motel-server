@@ -58,15 +58,21 @@
 *create Post
     auth:true
     *POST: localhost:7777/posts
-    body:{
-        "roomId":"89350f77-3862-4d9a-a0c7-20a81cd7996a",
-        "description":"day la mot ngoi nha lon",
-        "postType":"FOR_RENT",
-        "title":"Day la la la caim lon",
-        "phone":"0986173774",
-        "price":"1000000",
-        "latitude"
-        "longitude"
+    form data:{
+        images:[],
+        postType,
+        area,
+        title,
+        price,
+        deposit,
+        waterCost,
+        electricityCost,
+        description,
+        address,
+        wardId,
+        utilityIds:[],
+        roomTypeId,
+        phone
     }
 *get new post 
     auth:false
