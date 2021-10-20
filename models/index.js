@@ -10,6 +10,10 @@ const FeeBaseOn = require('./feeBaseOn.model');
 const Room = require('./room.model');
 const Services = require('./services.model')
 const Posts = require('./post.model')
+const Bill = require('./bill.model');
+const Bills_services = require('./bills_services');
+const Contracts = require('./contract.model');
+const Renter = require('./renter.model');
 
 module.exports = {
   User,
@@ -21,7 +25,12 @@ module.exports = {
   Ward,
   Building,
   Room,
+  Posts,
+  
   FeeBaseOn,
   Services,
-  Posts
+  Bill,
+  Bills_services,
+  Contracts,
+  Renter,
 };

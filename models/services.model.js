@@ -23,7 +23,7 @@ module.exports = (sequelize) => {
             description: {
                 type: DataTypes.STRING
             },
-            fee_base_on: {
+            fee_base_on_id: {
                 type: DataTypes.UUID,
                 allowNull: false
             }

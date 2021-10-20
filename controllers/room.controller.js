@@ -8,15 +8,9 @@ const createRoom = async (req, res) => {
         area,
         name,
         deposit,
-        price,
         roomTypeId,
         utilityIds
     } = req.body;
-    const images = req.images.map(i => {
-        return {
-            name: i
-        }
-    });
 
     try {
         const room = await Room.create({
@@ -24,11 +18,7 @@ const createRoom = async (req, res) => {
             name,
             area,
             deposit,
-            price,
             roomTypeId,
-            postImages: images
-        }, {
-            include: ['postImages']
         }
         )
         await room.addUtilities(utilityIds)

@@ -1,6 +1,6 @@
 
-const setAssociations = ({
 
+const setAssociations = ({
   Room,
   PostImage,
   Utility,
@@ -10,7 +10,13 @@ const setAssociations = ({
   Province,
   District,
   User,
-  Posts
+  Posts,
+  Services,
+  FeeBaseOn,
+  Contracts,
+  Bill,
+  Bills_services,
+  Renter
 }) => {
   // Room - RoomType
   Room.belongsTo(RoomType, { foreignKey: 'roomTypeId', as: 'roomType' });
@@ -74,6 +80,78 @@ const setAssociations = ({
   // Post - Room type
   Posts.belongsTo(RoomType, { foreignKey: 'roomTypeId', as: 'roomType' })
   RoomType.hasMany(Posts, { foreignKey: 'roomTypeId' })
+
+  // manager
+
+  //service - building
+  Services.belongsToMany(Building, {
+    through: 'ServicesBuilding',
+    foreignKey: "ServiceId",
+    as: 'serviceBuilding',
+  });
+
+  Building.belongsToMany(Services, {
+    through: "ServicesBuilding",
+    foreignKey: "buildingId"
+  });
+
+  // Services - fee base on
+  Services.hasOne(FeeBaseOn, {
+    foreignKey: 'serviceId'
+  })
+  FeeBaseOn.belongsTo(Services, {
+    foreignKey: "serviceId"
+  })
+
+  // Services - contracts
+  Contracts.belongsToMany(Services, {
+    through: 'ContractsServices',
+    foreignKey: "contractId",
+    as: 'contractServices'
+  })
+  Services.belongsToMany(Contracts, {
+    through: "ContractsServices",
+    foreignKey: 'serviceId'
+  });
+
+  // Contract - bill
+  Contracts.hasMany(Bill, {
+    foreignKey: 'contractId'
+  })
+  Bill.belongsTo(Contracts, {
+    foreignKey: 'contractId'
+  })
+
+  // Bill - bill_services
+  Bills_services.belongsToMany(Bill, {
+    through: "bill_bill_service",
+    foreignKey: "billServiceId",
+    as: 'bill'
+  })
+  Bill.belongsToMany(Bills_services, {
+    through: "bill_bill_service",
+    foreignKey: "billId"
+  })
+  // bill_service - services
+  Services.hasMany(Bills_services, {
+    foreignKey: "serviceId",
+  })
+  Bills_services.belongsTo(Services, { foreignKey: 'serviceId' })
+  // contract - bill
+  Contracts.hasMany(Bills_services, {
+    foreignKey: "contractId"
+  })
+  Bills_services.belongsTo(Contracts, { foreignKey: "contractId" })
+
+  // Renter - contract
+  Renter.belongsToMany(Contracts, {
+    through: "ContractRenter",
+    foreignKey: "renterId"
+  })
+  Contracts.belongsToMany(Renter, {
+    through: "ContractRenter",
+    foreignKey: "contractId"
+  })
 };
 
 module.exports = { setAssociations };

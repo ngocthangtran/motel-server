@@ -28,7 +28,7 @@ app.listen(port, async () => {
   console.log(chalk.green(`server running at port ${port}`));
   await sequelize.authenticate();
   console.log(chalk.green(`connected to database`));
-  // await sequelize.sync({ alter: true, force: true });
-  await sequelize.sync({ alter: true });
+  await sequelize.sync({ alter: true, force: true });
+  // await sequelize.sync({ alter: true });
   console.log(chalk.green(`models synced`));
 });
