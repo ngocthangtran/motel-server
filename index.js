@@ -8,7 +8,8 @@ const buildingRouter = require('./routes/building.router');
 const roomRouter = require('./routes/room.router');
 const suggestions = require('./routes/suggestions.router');
 const service = require('./routes/services.router');
-const contracts = require('./routes/contracts.route')
+const contracts = require('./routes/contracts.route');
+const renter = require('./routes/renter.router');
 
 const port = process.env.PORT || 7777;
 const app = express();
@@ -21,7 +22,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 app.use((req, res, next) => {
-  console.log(req.method + ': ' + req.url);
+  // console.log(req.method + ': ' + req.url);
   next();
 });
 
@@ -33,6 +34,7 @@ app.use('/room', roomRouter);
 app.use('/suggestions', suggestions);
 app.use('/service', service);
 app.use('/contracts', contracts);
+app.use('/renter', renter)
 
 
 app.listen(port, async () => {
