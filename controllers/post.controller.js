@@ -3,6 +3,7 @@ const { Op } = require('sequelize');
 
 const converData = data => data.map(item => {
   const { postId, postType, title, price, area, description, address, Ward: ward, postImages } = item.dataValues
+  console.log(item.dataValues)
   const { nameImage } = postImages
   const linkImage = {
     url: `${process.env.BASE_URL}/assets/${nameImage}_full.jpg`,
@@ -96,7 +97,7 @@ const getNewPost = async (req, res) => {
     limit: 10,
   };
   const FOR_SHARE_clauses = {
-    attributes: ["postId", "postType", "title", "price", "area", "description",],
+    attributes: ["postId", "postType", "title", "price", "area", "description", "address"],
     include: [
       {
         attributes: ['name'],

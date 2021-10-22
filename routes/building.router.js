@@ -1,8 +1,11 @@
 const express = require('express')
 const router = express.Router();
-const { createBuilding, getBuilding, deleteBulding, repairBuilding } = require('../controllers/building.controller');
+const { createBuilding, getBuilding, deleteBulding, repairBuilding, addService, removeService } = require('../controllers/building.controller');
 const auth = require('../middleware/auth')
-const { validateWardId } = require('../middleware/validate/ward')
+const { validateWardId } = require('../middleware/validate/ward');
+const { validateServiceId } = require('../middleware/validate/services');
+const { validateBuildId } = require('../middleware/validate/building');
+
 
 
 router.post('/create',
@@ -39,6 +42,24 @@ router.post('/repair',
     ],
     (req, res) => {
         repairBuilding(req, res)
+    }
+)
+
+router.post('/addservice',
+    [
+        auth,
+        validateServiceId,
+        validateBuildId
+    ],
+    (req, res) => {
+        addService(req, res)
+    }
+)
+
+router.post('/removeservice',
+    [auth],
+    (req, res) => {
+        removeService(req, res);
     }
 )
 

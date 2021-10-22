@@ -98,3 +98,18 @@
     sort: SORT_UP - sắp xếp giá tiền từ bé đến lớn
     sort: SORT_DOWN - sắp xếp giá tiền từ lớn đến bé
     không có giá trị sort - lấy mới nhất
+
+***service
+    *create_service
+    auth:true
+    POST: localhost:7777/service/create
+    body:{
+        "name": "Điện",
+        "price": 30000,
+        "feeBaseOnsId": "6c368419-c07c-4b72-b8a0-a2b5c96ee030",
+        "unit": "kwh"
+    }
+
+    *Get_service_for_user
+    auth:true
+    GET: localhost:7777/service/user

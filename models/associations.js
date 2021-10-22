@@ -83,10 +83,16 @@ const setAssociations = ({
 
   // manager
 
+  // Service - user
+  User.hasMany(Services, {
+    foreignKey: "userId"
+  })
+  Services.belongsTo(User, { foreignKey: "userId" })
+
   //service - building
   Services.belongsToMany(Building, {
     through: 'ServicesBuilding',
-    foreignKey: "ServiceId",
+    foreignKey: "serviceId",
     as: 'serviceBuilding',
   });
 
@@ -96,11 +102,12 @@ const setAssociations = ({
   });
 
   // Services - fee base on
-  Services.hasOne(FeeBaseOn, {
-    foreignKey: 'serviceId'
+  FeeBaseOn.hasOne(Services, {
+    foreignKey: 'fee_base_ons_id'
   })
-  FeeBaseOn.belongsTo(Services, {
-    foreignKey: "serviceId"
+  Services.belongsTo(FeeBaseOn, {
+    foreignKey: "fee_base_ons_id",
+    as: 'createFeeBasseOn'
   })
 
   // Services - contracts
@@ -143,6 +150,14 @@ const setAssociations = ({
   })
   Bills_services.belongsTo(Contracts, { foreignKey: "contractId" })
 
+  // contract - room
+  Room.hasMany(Contracts, { foreignKey: "roomId" });
+  Contracts.belongsTo(Room, { foreignKey: 'roomId' })
+
+  // contract - user
+  User.hasMany(Contracts, { foreignKey: 'userId' });
+  Contracts.belongsTo(User, { foreignKey: "userId" })
+
   // Renter - contract
   Renter.belongsToMany(Contracts, {
     through: "ContractRenter",
@@ -152,6 +167,10 @@ const setAssociations = ({
     through: "ContractRenter",
     foreignKey: "contractId"
   })
+
+  //Renter - user
+  User.hasMany(Renter, { foreignKey: 'userId' });
+  Renter.belongsTo(User, { foreignKey: "userId" })
 };
 
 module.exports = { setAssociations };

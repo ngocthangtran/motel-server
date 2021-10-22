@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize');
 const modelDefiners = require('../models');
 const { setAssociations } = require('../models/associations');
-const { roomTypeSeeder, utilitySeeder } = require('../seeders');
+const { roomTypeSeeder, utilitySeeder, FeeBaseOnSeeder } = require('../seeders');
 
 console.log({
   a: process.env.DB_NAME,
@@ -32,5 +32,6 @@ setAssociations(models);
 // seeders - uncomment to seed after tables already exists
 // roomTypeSeeder(models.RoomType);
 // utilitySeeder(models.Utility);
+// FeeBaseOnSeeder(models.FeeBaseOn);
 
 module.exports = { sequelize, ...models };

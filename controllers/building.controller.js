@@ -1,4 +1,4 @@
-const { Building, Ward, District, Province } = require('../db');
+const { Building, Ward, District, Province, Services, sequelize } = require('../db');
 
 const createBuilding = async (req, res) => {
     const {
@@ -8,6 +8,7 @@ const createBuilding = async (req, res) => {
         closeTime,
         wardId
     } = req.body;
+
     const building = await Building.create({
         userId: req.user.userId,
         name,
@@ -20,7 +21,7 @@ const createBuilding = async (req, res) => {
 }
 
 const getBuilding = async (req, res) => {
-    const { userId } = req.user;    
+    const { userId } = req.user;
     try {
         const listBuilding = await Building.findAll(
             {
@@ -81,7 +82,7 @@ const deleteBulding = async (req, res) => {
 }
 
 const repairBuilding = async (req, res) => {
-    const {userId} = req.user;
+    const { userId } = req.user;
     // const userId = "e493adc1-cd37-4055-a965-b0cecede3373";
     const {
         buildingId,
@@ -109,10 +110,38 @@ const repairBuilding = async (req, res) => {
     }
 }
 
+const addService = async (req, res) => {
+    const { serviceId, buildingId } = req.body;
+    try {
+        const service = await Services.findByPk(serviceId)
+        await service.addServiceBuilding(buildingId)
+        res.send({
+            message: "Ok",
+            data: service
+        });
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
+const removeService = async (req, res) => {
+
+    const { serviceId, buildingId } = req.body;
+    try {
+        const sql = `delete from motel.servicesbuilding where serviceId="${serviceId}" and buildingId="${buildingId}"`
+        const result = await sequelize.query(sql)
+        res.send(result)
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
 
 module.exports = {
     createBuilding,
     getBuilding,
     deleteBulding,
-    repairBuilding
+    repairBuilding,
+    addService,
+    removeService
 }

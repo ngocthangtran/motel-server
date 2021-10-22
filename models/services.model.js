@@ -17,15 +17,15 @@ module.exports = (sequelize) => {
                 type: DataTypes.DECIMAL(12, 2),
                 allowNull: false
             },
+            unit: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
             icon: {
                 type: DataTypes.STRING
             },
             description: {
                 type: DataTypes.STRING
-            },
-            fee_base_on_id: {
-                type: DataTypes.UUID,
-                allowNull: false
             }
         }
     )
