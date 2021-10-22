@@ -26,7 +26,7 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        IssuedOn: {
+        issuedOn: {
             type: DataTypes.DATEONLY,
             allowNull: false
         }

@@ -1,5 +1,3 @@
-
-
 const setAssociations = ({
   Room,
   PostImage,
@@ -172,3 +170,5 @@ const setAssociations = ({
   User.hasMany(Renter, { foreignKey: 'userId' });
   Renter.belongsTo(User, { foreignKey: "userId" })
 }
+
+module.exports = {setAssociations}
