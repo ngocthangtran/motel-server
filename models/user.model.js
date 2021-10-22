@@ -1,7 +1,7 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes } = require('sequelize');
 
 module.exports = sequelize => {
-  return sequelize.define("User", {
+  return sequelize.define('User', {
     userId: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -22,19 +22,21 @@ module.exports = sequelize => {
     },
     facebookId: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
     googleId: {
       type: DataTypes.STRING,
     },
     area: {
       type: DataTypes.STRING,
+      allowNull: true,
       validate: {
-        isIn: [["HCM", "DN", "HN"]],
+        isIn: [['HCM', 'DN', 'HN']],
       },
     },
     phone: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       validate: {
         is: /(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/,
       },
