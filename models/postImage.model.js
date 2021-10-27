@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = sequelize => {
-  return sequelize.define("PostImage", {
+  return sequelize.define("postImage", {
     postImageId: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,

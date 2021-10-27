@@ -160,7 +160,22 @@ const getAContract = async (req, res) => {
 }
 
 const terminateContract = (req, res) => {
+    const { contractId } = req.body;
+    try {
+        const result = Contracts.update({
+            status: true
+        }, {
+            where: {
+                contractId
+            }
+        })
+        res.send({
+            status: 200,
+            message: `terminate complete ${result} contract`
+        })
+    } catch (error) {
 
+    }
 }
 
 module.exports = {
