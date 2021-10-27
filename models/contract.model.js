@@ -16,11 +16,11 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         startAt: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
             defaultValue: DataTypes.NOW
         },
         endAt: {
-            type: DataTypes.DATE
+            type: DataTypes.DATEONLY
         },
         paymentCycle: {
             type: DataTypes.TEXT,
@@ -33,6 +33,10 @@ module.exports = (sequelize) => {
         deposit: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: false
+        },
+        status: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
     })
 }

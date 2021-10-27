@@ -33,7 +33,7 @@ app.use('/building', buildingRouter);
 app.use('/room', roomRouter);
 app.use('/suggestions', suggestions);
 app.use('/service', service);
-app.use('/contracts', contracts);
+app.use('/contract', contracts);
 app.use('/renter', renter)
 
 

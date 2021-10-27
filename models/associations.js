@@ -163,7 +163,8 @@ const setAssociations = ({
   })
   Contracts.belongsToMany(Renter, {
     through: "ContractRenter",
-    foreignKey: "contractId"
+    foreignKey: "contractId",
+    as: 'contractRenter'
   })
 
   //Renter - user
@@ -171,4 +172,4 @@ const setAssociations = ({
   Renter.belongsTo(User, { foreignKey: "userId" })
 }
 
-module.exports = {setAssociations}
+module.exports = { setAssociations }

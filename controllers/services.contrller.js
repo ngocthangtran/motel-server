@@ -3,15 +3,17 @@ const { Services, FeeBaseOn, User, Building } = require('../db');
 const createService = async (req, res) => {
     const {
         name, price, icon, description,
-        feeBaseOnsId, unit
+        feeBaseOnsId, unit, startValue
     } = req.body;
+
     if (!name || !price || !unit) return res.status(400).send({ status: 400, message: "name, price, unit is required" })
     try {
         const service = await Services.create({
             userId: req.user.userId,
             name, price, icon,
             unit,
-            description, fee_base_ons_id: feeBaseOnsId
+            description, fee_base_ons_id: feeBaseOnsId,
+            startValue
         }
         )
         res.send(service);

@@ -26,6 +26,9 @@ module.exports = (sequelize) => {
             },
             description: {
                 type: DataTypes.STRING
+            },
+            startValue: {
+                type: DataTypes.INTEGER
             }
         }
     )

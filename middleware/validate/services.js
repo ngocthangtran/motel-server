@@ -6,13 +6,25 @@ const validateServiceId = async (req, res, next) => {
         message: "serviceId is required"
     })
     const service = await Services.findByPk(serviceId)
-    
+
     if (!service) return res.status(404).send({
         message: "can't find serviceId on database"
     });
     next();
 }
 
+const validateServiceArr = async (req, res, next) => {
+    const serviceIds = req.body.serviceIds;
+    for (serviceId of serviceIds) {
+        const service = await Services.findByPk(serviceId);
+        if (!service)
+            return res
+                .status(400)
+                .send({ error: 'cannot find Utility with id ' + serviceId });
+    }
+    next();
+};
 module.exports = {
-    validateServiceId
+    validateServiceId,
+    validateServiceArr
 }
