@@ -3,6 +3,7 @@ const { createContracts, getContract, getAContract, getAllContract, terminateCon
 const router = express.Router();
 const auth = require('../middleware/auth');
 const { validateContractId } = require('../middleware/validate/contracts');
+const { validateRenter } = require('../middleware/validate/renter');
 const { validateRoomId } = require('../middleware/validate/room');
 const { validateServiceId, validateServiceArr } = require('../middleware/validate/services')
 
@@ -10,7 +11,8 @@ router.post("/create",
     [
         auth,
         validateRoomId,
-        validateServiceArr
+        validateServiceArr,
+        validateRenter
     ],
     (req, res) => {
         createContracts(req, res)
@@ -46,4 +48,15 @@ router.get('/terminate/:contractId',
     }
 )
 
+router.post('/repair/:contractId',
+    [
+        auth,
+        validateRoomId,
+        validateServiceArr,
+        validateRenter
+    ],
+    (req, res) => {
+        
+    }
+)
 module.exports = router;

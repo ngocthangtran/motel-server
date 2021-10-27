@@ -159,10 +159,10 @@ const getAContract = async (req, res) => {
     }
 }
 
-const terminateContract = (req, res) => {
-    const { contractId } = req.body;
+const terminateContract = async (req, res) => {
+    const { contractId } = req.params;
     try {
-        const result = Contracts.update({
+        const result = await Contracts.update({
             status: true
         }, {
             where: {
@@ -174,13 +174,18 @@ const terminateContract = (req, res) => {
             message: `terminate complete ${result} contract`
         })
     } catch (error) {
-
+        res.status(500).send(error);
     }
+}
+
+const repairContracts = (req, res) => {
+
 }
 
 module.exports = {
     createContracts,
     getAllContract,
     getAContract,
-    terminateContract
+    terminateContract,
+    repairContracts
 }

@@ -33,7 +33,9 @@ const createPost = async (req, res) => {
     description,
     address,
     wardId,
-    utilityIds
+    utilityIds,
+    latitude,
+    longitude
   } = req.body
 
   const images = req.images.map(i => {
@@ -57,6 +59,8 @@ const createPost = async (req, res) => {
       description,
       address,
       wardId,
+      latitude,
+      longitude,
       postImages: images,
     }, {
       include: ['postImages']
