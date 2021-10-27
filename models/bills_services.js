@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-    return sequelize.define('bills_services', {
+    return sequelize.define('Bills_services', {
         billServiceId: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -19,5 +19,7 @@ module.exports = (sequelize) => {
         date: {
             type: DataTypes.DATEONLY
         }
+    },{
+        tableName: 'bills_services'
     })
 }

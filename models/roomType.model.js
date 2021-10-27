@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 
 module.exports = sequelize => {
   return sequelize.define(
-    'roomType',
+    'RoomType',
     {
       roomTypeId: {
         type: DataTypes.UUID,
@@ -20,6 +20,7 @@ module.exports = sequelize => {
     },
     {
       timestamps: false,
-    }
+      tableName: 'room_type'
+    },
   );
 };

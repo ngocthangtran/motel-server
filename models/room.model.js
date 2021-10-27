@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
     return sequelize.define(
-        "room",
+        "Room",
         {
             roomId: {
                 type: DataTypes.UUID,
@@ -32,6 +32,9 @@ module.exports = (sequelize) => {
                 type: DataTypes.UUID,
                 allowNull: false
             }
+        },
+        {
+            tableName: 'room'
         }
     )
 }

@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 
 module.exports = sequelize => {
   return sequelize.define(
-    'provinces',
+    'Provinces',
     {
       provinceId: {
         type: DataTypes.STRING,
@@ -20,6 +20,7 @@ module.exports = sequelize => {
     },
     {
       timestamps: false,
+      tableName: 'Provinces'
     }
   );
 };

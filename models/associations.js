@@ -22,12 +22,12 @@ const setAssociations = ({
 
   // ROOM - Utility
   Room.belongsToMany(Utility, {
-    through: 'RoomUtilities',
+    through: 'room_utilities',
     foreignKey: 'roomId',
     as: 'utilities',
   });
   Utility.belongsToMany(Room, {
-    through: 'RoomUtilities',
+    through: 'room_utilities',
     foreignKey: 'utilityId',
   });
 
@@ -65,13 +65,13 @@ const setAssociations = ({
 
   // Post - Utilities
   Posts.belongsToMany(Utility, {
-    through: "PostsUtilities",
+    through: "posts_utilities",
     foreignKey: 'postId',
     as: 'postutilities'
   })
 
   Utility.belongsToMany(Posts, {
-    through: 'PostsUtilities',
+    through: 'posts_utilities',
     foreignKey: 'utilityId'
   })
 
@@ -89,13 +89,13 @@ const setAssociations = ({
 
   //service - building
   Services.belongsToMany(Building, {
-    through: 'ServicesBuilding',
+    through: 'services_building',
     foreignKey: "serviceId",
     as: 'serviceBuilding',
   });
 
   Building.belongsToMany(Services, {
-    through: "ServicesBuilding",
+    through: "services_building",
     foreignKey: "buildingId"
   });
 
@@ -110,12 +110,12 @@ const setAssociations = ({
 
   // Services - contracts
   Contracts.belongsToMany(Services, {
-    through: 'ContractsServices',
+    through: 'contracts_services',
     foreignKey: "contractId",
     as: 'contractServices'
   })
   Services.belongsToMany(Contracts, {
-    through: "ContractsServices",
+    through: "contracts_services",
     foreignKey: 'serviceId'
   });
 
@@ -158,11 +158,11 @@ const setAssociations = ({
 
   // Renter - contract
   Renter.belongsToMany(Contracts, {
-    through: "ContractRenter",
+    through: "contract_renter",
     foreignKey: "renterId"
   })
   Contracts.belongsToMany(Renter, {
-    through: "ContractRenter",
+    through: "contract_renter",
     foreignKey: "contractId",
     as: 'contractRenter'
   })

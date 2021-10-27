@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = sequelize => {
-  return sequelize.define('posts', {
+  return sequelize.define('Posts', {
     postId: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -76,6 +76,8 @@ module.exports = sequelize => {
         max: 180,
       },
     },
-  });
+  },{
+    tableName: 'posts'
+});
 
 };

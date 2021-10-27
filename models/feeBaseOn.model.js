@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
     return sequelize.define(
-        "fee_base_on",
+        "Fee_base_on",
         {
             fee_base_on_id: {
                 type: DataTypes.UUID,
@@ -16,6 +16,9 @@ module.exports = (sequelize) => {
             description: {
                 type: DataTypes.STRING
             },
+        },
+        {
+            tableName: 'fee_base_on'
         }
     )
 }
