@@ -3,11 +3,13 @@ const { Op } = require('sequelize');
 
 const converData = data => data.map(item => {
   const { postId, postType, title, price, area, description, address, Ward: ward, postImages } = item.dataValues
-  console.log(item.dataValues)
-  const { nameImage } = postImages
-  const linkImage = {
-    url: `${process.env.BASE_URL}/assets/${nameImage}_full.jpg`,
-    thumbUrl: `${process.env.BASE_URL}/assets/${nameImage}_thumb.jpg`,
+  let linkImage;
+  if (postImages[0]) {
+    const { name: nameImage } = postImages[0];
+    linkImage = {
+      url: `${process.env.BASE_URL}/assets/${nameImage}_full.jpg`,
+      thumbUrl: `${process.env.BASE_URL}/assets/${nameImage}_thumb.jpg`,
+    }
   }
   return {
     postId, title, postType, price, area, description, linkImage,
@@ -132,9 +134,13 @@ const getNewPost = async (req, res) => {
     const for_share = await Posts.findAll({
       ...FOR_SHARE_clauses
     })
-    res.send({ for_rent: converData(for_rent), for_share: converData(for_share) })
+    res.send({
+      for_rent: converData(for_rent),
+      for_share: converData(for_share)
+    })
   } catch (error) {
-
+    console.log(error)
+    res.send(error)
   }
 
 };
@@ -198,6 +204,7 @@ const viewPost = async (req, res) => {
     }
     res.send(converData(post))
   } catch (error) {
+    console.log(error)
     res.status(500).send(error)
   }
 

@@ -159,8 +159,13 @@ const getAContract = async (req, res) => {
     }
 }
 
+const terminateContract = (req, res) => {
+
+}
+
 module.exports = {
     createContracts,
     getAllContract,
-    getAContract
+    getAContract,
+    terminateContract
 }

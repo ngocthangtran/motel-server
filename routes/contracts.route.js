@@ -36,4 +36,11 @@ router.get('/:contractId',
     }
 )
 
+router.post('/terminate',
+    [auth],
+    (req, res) => {
+
+    }
+)
+
 module.exports = router;
