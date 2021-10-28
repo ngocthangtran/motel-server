@@ -37,13 +37,13 @@ router.get('/viewpost/:postId', (req, res) => {
   viewPost(req, res)
 })
 
-router.get('/find',
+router.post('/find',
   [
     // validateWardId,
     // validateRoomTypeId
   ]
   , (req, res) => {
-    const { wardId, value } = req.query;
+    const { wardId } = req.query;
     if (wardId) {
       findAddress(req, res);
     } else {

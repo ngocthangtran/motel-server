@@ -261,7 +261,13 @@ const findAddress = async (req, res) => {
 }
 
 const findPostForValue = async (req, res) => {
-  const { value, roomTypeId, postType, sort } = req.query;
+  const {
+    value, roomTypeId, postType, sort, page
+  } = req.query;
+
+  const { price, area } = req.body
+  let valuePrice = `and price BETWEEN ${price.start} and ${price.end}`;
+  let valueArea = `and area BETWEEN ${area.start} and ${area.end}`;
   let valueSort;
   if (!sort) {
     valueSort = 'createdAt DESC'
@@ -269,6 +275,13 @@ const findPostForValue = async (req, res) => {
     valueSort = 'price ASC'
   } else {
     valueSort = 'price DESC'
+  }
+
+  let valuePage;
+  if (!page) {
+    valuePage = `LIMIT 0, 10`
+  } else {
+    valuePage = `LIMIT ${page * 10 - 10}, 10`
   }
 
   try {
@@ -287,8 +300,12 @@ const findPostForValue = async (req, res) => {
     ) myPosts
     
     where myPosts.wardId = myAddress.wardId and (myAddress.address like "%${value}%" or myPosts.title like "%${value}%" or myPosts.address like "%${value}%")
-    ${postType ? `and postType='${postType}'` : ''} ${roomTypeId ? `and roomTypeId='${roomTypeId}'` : ''}
+    ${postType ? `and postType='${postType}'` : ''} 
+    ${roomTypeId ? `and roomTypeId='${roomTypeId}'` : ''}
+    ${price ? valuePrice : ''}
+    ${area ? valueArea : ''}
     order by ${valueSort}
+    ${valuePage}
     ;`
     );
     const dataConvert = data[0].map(element => {
@@ -309,8 +326,7 @@ const findPostForValue = async (req, res) => {
       data: dataConvert
     })
   } catch (error) {
-    console.log(error)
-    res.send(error)
+    res.status(500).send(error)
   }
 }
 
