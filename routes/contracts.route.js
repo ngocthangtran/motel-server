@@ -1,5 +1,5 @@
 const express = require('express');
-const { createContracts, getContract, getAContract, getAllContract, terminateContract } = require('../controllers/contracts.controller');
+const { createContracts, getContract, getAContract, getAllContract, terminateContract, repairContracts } = require('../controllers/contracts.controller');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const { validateContractId } = require('../middleware/validate/contracts');
@@ -51,12 +51,12 @@ router.get('/terminate/:contractId',
 router.post('/repair/:contractId',
     [
         auth,
-        validateRoomId,
         validateServiceArr,
-        validateRenter
+        validateRenter,
+        validateContractId
     ],
     (req, res) => {
-
+        repairContracts(req, res);
     }
 )
 

@@ -178,8 +178,27 @@ const terminateContract = async (req, res) => {
     }
 }
 
-const repairContracts = (req, res) => {
+const repairContracts = async (req, res) => {
+    const { contractId } = req.params;
+    const {
+        startAt, endAt, paymentCycle, price, deposit,
+        serviceIds, renterIds
+    } = req.body;
 
+    try {
+        const result = await Contracts.update({
+            startAt, endAt, paymentCycle, price, deposit
+        },{
+
+        })
+        const contract = await Contracts.findByPk(contractId)
+        const renterIds = [
+            "39709ee2-0a57-4fd0-a25b-025e8db9eae6"
+        ]
+        await contract.addContractRenter(renterIds)
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 module.exports = {
