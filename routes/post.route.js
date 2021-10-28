@@ -37,7 +37,7 @@ router.get('/viewpost/:postId', (req, res) => {
   viewPost(req, res)
 })
 
-router.post('/find',
+router.get('/find',
   [
     // validateWardId,
     // validateRoomTypeId
