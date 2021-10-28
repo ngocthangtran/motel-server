@@ -376,7 +376,59 @@ const getPostFor = async (req, res) => {
   }
 }
 
+const getPostForUser = async (req, res) => {
+  const { userId } = req.user
+  const clauses = {
+    attributes: ["postId", "postType", "title", "price", "area", "description", "address"],
+    include: [
+      {
+        model: User,
+        where: {
+          userId
+        }
+      },
+      {
+        attributes: ['name'],
+        model: PostImage,
+        as: 'postImages',
+        limit: 1
+      },
+      {
+        attributes: ['name'],
+        model: Ward,
+        include: {
+          attributes: ['name'],
+          model: District,
+          include: {
+            model: Province,
+            attributes: ['name'],
+          }
+        }
+      }
+    ],
+    order: [['createdAt', 'DESC']],
+    offset: 0,
+    limit: 10,
+  };
+  try {
+    const post = await Posts.findAll({
+      ...clauses
+    })
+    res.send({
+      count: post.length,
+      post: converData(post)
+    })
+  } catch (error) {
+
+  }
+}
+
+const liked = (req, res) => {
+
+}
+
 module.exports = {
   createPost, getNewPost, viewPost,
-  findAddress, getPostFor, findPostForValue
+  findAddress, getPostFor, findPostForValue,
+  getPostForUser, liked
 };

@@ -81,7 +81,9 @@
 *get a post 
     auth:false
     *GET: localhost:7777/posts/viewpost/:postId
-
+*get new post for postType
+    auth:false
+    *GET: localhost:7777/posts/type?postType=FOR_SHARE&page=1
 
 ***Find_Post
     *suggestions address
@@ -109,7 +111,10 @@
     loc thoe giá tien và dienj tich:
     priceStart & priceEnd
     areaStart & areaEnd
-}
+    
+    * get post for user
+    auth: true
+    *GET: localhost:7777/posts/user
 
 ***service
     *create_service
