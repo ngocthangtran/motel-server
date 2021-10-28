@@ -192,18 +192,24 @@ const viewPost = async (req, res) => {
           thumbUrl: `${process.env.BASE_URL}/assets/${name}_thumb.jpg`,
         }
       })
+
       postutilities = postutilities.map(item => {
         const { name, icon } = item
         return {
           name, icon
         }
       })
-      address = `${address}, ${ward.name}, ${ward.District.name}, ${ward.District.Province.name}`
 
       delete data[0].dataValues.postutilities
       delete data[0].dataValues.Ward
+      delete data[0].dataValues.wardId
+      delete data[0].dataValues.createdAt
+      delete data[0].dataValues.updatedAt
+
       return {
-        ...data[0].dataValues, postImages: images, utility: postutilities, address: address
+        ...data[0].dataValues,
+        address, ward: ward.name, district: ward.District.name, province: ward.District.Province.name,
+        postImages: images, utility: postutilities
       }
     }
     res.send(converData(post))
