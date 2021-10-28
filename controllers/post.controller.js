@@ -1,4 +1,4 @@
-const { User, Posts, Ward, Province, PostImage, District, Room, Building, RoomType, Utility } = require('../db');
+const { User, Posts, Ward, Province, PostImage, District, Room, Building, RoomType, Utility, sequelize } = require('../db');
 const { Op } = require('sequelize');
 
 const converData = data => data.map(item => {
@@ -260,6 +260,60 @@ const findAddress = async (req, res) => {
 
 }
 
+const findPostForValue = async (req, res) => {
+  const { value, roomTypeId, postType, sort } = req.query;
+  let valueSort;
+  if (!sort) {
+    valueSort = 'createdAt DESC'
+  } else if (sort === 'SORT_UP') {
+    valueSort = 'price ASC'
+  } else {
+    valueSort = 'price DESC'
+  }
+
+  try {
+    const data = await sequelize.query(`select * from 
+    (
+    select wards.wardId,concat( wards.name,", ", districts.name, ", ",  provinces.name) as address,
+    wards.name as ward,districts.name as districts, provinces.name as provinces
+    from motel.wards, motel.districts, motel.provinces
+    where wards.districtId = districts.districtId and districts.provinceId = provinces.provinceId) myAddress,
+    (
+    select wards.wardId, 
+    posts.postId, posts.title, posts.address, posts.postType, posts.price, posts.area, posts.description, post_images.name as nameImgae, posts.createdAt, posts.roomTypeId
+    from motel.wards, motel.posts, motel.post_images
+    where wards.wardId = posts.wardId and posts.postId = post_images.postId
+    group by postId
+    ) myPosts
+    
+    where myPosts.wardId = myAddress.wardId and (myAddress.address like "%${value}%" or myPosts.title like "%${value}%" or myPosts.address like "%${value}%")
+    ${postType ? `and postType='${postType}'` : ''} ${roomTypeId ? `and roomTypeId='${roomTypeId}'` : ''}
+    order by ${valueSort}
+    ;`
+    );
+    const dataConvert = data[0].map(element => {
+      const linkImage = {
+        url: `${process.env.BASE_URL}/assets/${element.nameImgae}_full.jpg`,
+        thumbUrl: `${process.env.BASE_URL}/assets/${element.nameImgae}_thumb.jpg`,
+      }
+      delete element.nameImgae;
+      delete element.createdAt;
+      delete element.roomTypeId;
+      return {
+        ...element,
+        linkImage
+      }
+    });
+    res.send({
+      count: data[0].length,
+      data: dataConvert
+    })
+  } catch (error) {
+    console.log(error)
+    res.send(error)
+  }
+}
+
 const getPostFor = async (req, res) => {
   const { postType, page } = req.query;
   try {
@@ -309,5 +363,5 @@ const getPostFor = async (req, res) => {
 
 module.exports = {
   createPost, getNewPost, viewPost,
-  findAddress, getPostFor
+  findAddress, getPostFor, findPostForValue
 };

@@ -188,14 +188,18 @@ const repairContracts = async (req, res) => {
     try {
         const result = await Contracts.update({
             startAt, endAt, paymentCycle, price, deposit
-        },{
-
+        }, {
+            where: {
+                contractId
+            }
         })
         const contract = await Contracts.findByPk(contractId)
-        const renterIds = [
-            "39709ee2-0a57-4fd0-a25b-025e8db9eae6"
-        ]
+        await contract.addContractServices(serviceIds);
         await contract.addContractRenter(renterIds)
+        res.send({
+            status: 200,
+            message: `${result} contract is changed`
+        })
     } catch (error) {
         console.log(error)
     }
