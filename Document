@@ -116,6 +116,10 @@
     auth: true
     *GET: localhost:7777/posts/user
 
+    * delete post
+    auth: true
+    *DELETE: localhost:7777/posts/delete/231a9df3-6cf7-46c1-a725-619b5b26c27b
+
 ***service
     *create_service
     auth:true

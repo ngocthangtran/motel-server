@@ -1,5 +1,6 @@
 const { User, Posts, Ward, Province, PostImage, District, Room, Building, RoomType, Utility, sequelize } = require('../db');
 const { Op } = require('sequelize');
+const { unlink } = require('fs')
 
 const converData = data => data.map(item => {
   const { postId, postType, title, price, area, description, address, Ward: ward, postImages } = item.dataValues
@@ -423,6 +424,45 @@ const getPostForUser = async (req, res) => {
   }
 }
 
+const deletePost = async (req, res) => {
+  const { postId } = req.params;
+  let nameImage = []
+  try {
+    const post = await Posts.findOne({
+      include: ['postutilities', 'postImages'],
+      where: {
+        postId
+      }
+    })
+    post.dataValues.postImages.forEach(element => {
+      nameImage.push(`${element.name}_full.jpg`)
+      nameImage.push(`${element.name}_thumb.jpg`)
+    });
+    await post.destroy();
+    res.send(post)
+  } catch (error) {
+    console.log(error)
+    res.status(500).send(error)
+  } finally {
+    if (nameImage.length != 0) {
+      Promise.all(
+        nameImage.map(
+          file =>
+            new Promise((res, rej) => {
+              try {
+                unlink(`./public/assets/${file}`, (err) => {
+                  if (err) return console.log("loi xoa")
+                  console.log("delete complete img on server")
+                });
+              } catch (err) {
+                console.log(err)
+              }
+            })
+        ))
+    }
+  }
+}
+
 const liked = (req, res) => {
 
 }
@@ -430,5 +470,5 @@ const liked = (req, res) => {
 module.exports = {
   createPost, getNewPost, viewPost,
   findAddress, getPostFor, findPostForValue,
-  getPostForUser, liked
+  getPostForUser, deletePost, liked
 };

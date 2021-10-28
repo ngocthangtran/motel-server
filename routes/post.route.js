@@ -1,11 +1,12 @@
 const express = require('express');
 const auth = require('../middleware/auth')
-const { createPost, getNewPost, viewPost, findAddress, getPostFor, findPostForValue, getPostForUser } = require('../controllers/post.controller');
+const { createPost, getNewPost, viewPost, findAddress, getPostFor, findPostForValue, getPostForUser, deletePost } = require('../controllers/post.controller');
 const { validateRoomTypeId } = require('../middleware/validate/roomType');
 const { validateWardId } = require('../middleware/validate/ward');
 const imageResize = require('../middleware/imageResize');
 const multer = require('multer');
 const { validateUtilityIds } = require('../middleware/validate/utility');
+const { validatePostId } = require('../middleware/validate/posts');
 const router = express.Router();
 
 
@@ -63,11 +64,12 @@ router.get('/user',
   }
 )
 
-router.post('/delete',
+router.delete('/delete/:postId',
   [
-    auth
+    auth,
+    // validatePostId
   ], (req, res) => {
-
+    deletePost(req, res)
   }
 )
 
