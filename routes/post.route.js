@@ -1,6 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth')
-const { createPost, getNewPost, viewPost, findAddress, filterPost } = require('../controllers/post.controller');
+const { createPost, getNewPost, viewPost, findAddress, getPostFor } = require('../controllers/post.controller');
 const { validateRoomTypeId } = require('../middleware/validate/roomType');
 const { validateWardId } = require('../middleware/validate/ward');
 const imageResize = require('../middleware/imageResize');
@@ -44,6 +44,12 @@ router.get('/find',
   ]
   , (req, res) => {
     findAddress(req, res)
-  })
+  }
+)
+
+router.get('/type', (req, res) => {
+  getPostFor(req, res);
+})
+
 
 module.exports = router

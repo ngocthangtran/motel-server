@@ -260,7 +260,54 @@ const findAddress = async (req, res) => {
 
 }
 
+const getPostFor = async (req, res) => {
+  const { postType, page } = req.query;
+  try {
+    const clauses = {
+      attributes: ["postId", "postType", "title", "price", "area", "description", "address"],
+      include: [
+        {
+          attributes: ['name'],
+          model: PostImage,
+          as: 'postImages',
+          limit: 1
+        },
+        {
+          attributes: ['name'],
+          model: Ward,
+          include: {
+            attributes: ['name'],
+            model: District,
+            include: {
+              model: Province,
+              attributes: ['name'],
+            }
+          }
+        }
+      ],
+      where: {
+        postType
+      },
+      order: [['createdAt', 'DESC']],
+      offset: page * 10 - 10,
+      limit: 10,
+    };
+
+    const data = await Posts.findAll({
+      ...clauses
+    })
+
+    res.send({
+      postType,
+      count: data.length,
+      data: converData(data)
+    })
+  } catch (error) {
+    res.status(500).send(error)
+  }
+}
+
 module.exports = {
   createPost, getNewPost, viewPost,
-  findAddress,
+  findAddress, getPostFor
 };
