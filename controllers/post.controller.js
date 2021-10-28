@@ -262,12 +262,11 @@ const findAddress = async (req, res) => {
 
 const findPostForValue = async (req, res) => {
   const {
-    value, roomTypeId, postType, sort, page
+    value, roomTypeId, postType, sort, page, priceStart, priceEnd, areaStart, areaEnd
   } = req.query;
 
-  const { price, area } = req.body
-  let valuePrice = `and price BETWEEN ${price.start} and ${price.end}`;
-  let valueArea = `and area BETWEEN ${area.start} and ${area.end}`;
+  let valuePrice = `and price BETWEEN ${priceStart} and ${priceEnd}`;
+  let valueArea = `and area BETWEEN ${areaStart} and ${areaEnd}`;
   let valueSort;
   if (!sort) {
     valueSort = 'createdAt DESC'
@@ -302,8 +301,8 @@ const findPostForValue = async (req, res) => {
     where myPosts.wardId = myAddress.wardId and (myAddress.address like "%${value}%" or myPosts.title like "%${value}%" or myPosts.address like "%${value}%")
     ${postType ? `and postType='${postType}'` : ''} 
     ${roomTypeId ? `and roomTypeId='${roomTypeId}'` : ''}
-    ${price ? valuePrice : ''}
-    ${area ? valueArea : ''}
+    ${priceStart ? valuePrice : ''}
+    ${areaEnd ? valueArea : ''}
     order by ${valueSort}
     ${valuePage}
     ;`

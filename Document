@@ -107,15 +107,8 @@
     không có giá trị sort - lấy mới nhất
     page: nếu không có mặc định là 1 mỗi page có 10 post
     loc thoe giá tien và dienj tich:
-    body:{
-    "price": {
-        "start": 0,
-        "end": 2000000
-    },
-    "area": {
-        "start": 0,
-        "end": 5000000
-    }
+    priceStart & priceEnd
+    areaStart & areaEnd
 }
 
 ***service
