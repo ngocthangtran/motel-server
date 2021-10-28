@@ -426,12 +426,14 @@ const getPostForUser = async (req, res) => {
 
 const deletePost = async (req, res) => {
   const { postId } = req.params;
+  const { userId } = req.user;
   let nameImage = []
   try {
     const post = await Posts.findOne({
       include: ['postutilities', 'postImages'],
       where: {
-        postId
+        postId,
+        userId
       }
     })
     post.dataValues.postImages.forEach(element => {
