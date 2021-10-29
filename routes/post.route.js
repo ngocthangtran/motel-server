@@ -1,6 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth')
-const { createPost, getNewPost, viewPost, findAddress, getPostFor, findPostForValue, getPostForUser, deletePost, repairPost } = require('../controllers/post.controller');
+const { createPost, getNewPost, viewPost, findAddress, getPostFor, findPostForValue, getPostForUser, deletePost, repairPost, deleteImagePost } = require('../controllers/post.controller');
 const { validateRoomTypeId } = require('../middleware/validate/roomType');
 const { validateWardId } = require('../middleware/validate/ward');
 const imageResize = require('../middleware/imageResize');
@@ -67,6 +67,8 @@ router.get('/user',
 router.post('/repair/:postId',
   [
     auth,
+    upload.array('images', MAX_IMAGE_COUNT),
+    imageResize,
     validatePostId
   ], (req, res) => {
     repairPost(req, res);
@@ -76,9 +78,16 @@ router.post('/repair/:postId',
 router.delete('/delete/:postId',
   [
     auth,
-    // validatePostId
+    validatePostId
   ], (req, res) => {
     deletePost(req, res)
+  }
+)
+
+router.delete('/image',
+  [auth, validatePostId],
+  (req, res) => {
+    deleteImagePost(req, res);
   }
 )
 

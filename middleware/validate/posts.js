@@ -1,8 +1,8 @@
 const { Posts } = require("../../db");
 
 const validatePostId = async (req, res, next) => {
-    const postId = req.body.postId || req.params.postId;
-    
+    const postId = req.body.postId || req.params.postId || req.query.postId;
+
     if (!postId) return res.send({ error: "postId is required" })
     const post = await Posts.findByPk(postId)
     if (!post) {

@@ -441,15 +441,60 @@ const repairPost = async (req, res) => {
     description,
     address,
     wardId,
-    utilityIds,
     latitude,
-    longitude
+    longitude,
+    utilityIds
   } = req.body;
   const images = req.images.map(i => {
     return {
-      name: i
+      name: i, postId
     }
   });
+  try {
+    await Posts.update({
+      postType,
+      area,
+      title,
+      price,
+      deposit,
+      roomTypeId,
+      phone,
+      waterCost,
+      electricityCost,
+      description,
+      address,
+      wardId,
+      latitude,
+      longitude,
+    }, {
+
+      where: {
+        postId,
+        userId: req.user.userId
+      },
+    })
+    if (images.length !== 0) {
+      await PostImage.bulkCreate(images)
+    }
+    if (utilityIds.length !== 0) {
+      const post = await Posts.findOne({
+        include: ['postutilities', 'postImages'],
+        where: {
+          postId,
+          userId: req.user.userId
+        }
+      })
+      await post.addPostutilities(utilityIds)
+    }
+    res.send({
+      status: 200,
+      message: "reqair post complete with postId: " + postId
+    })
+
+  } catch (error) {
+    console.log(error)
+    res.status(500).send(error)
+  }
 }
 
 const deletePost = async (req, res) => {
@@ -493,6 +538,29 @@ const deletePost = async (req, res) => {
   }
 }
 
+const deleteImagePost = async (req, res) => {
+  const { nameImage: name, postId } = req.query;
+  try {
+    const result = await PostImage.destroy({
+      where: {
+        name,
+        postId
+      }
+    })
+    res.send({
+      status: 200,
+      message: `delete ${result} Image`
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).send(error)
+  }
+}
+
+const deleteUtilitie = (req, res) => {
+
+}
+
 const liked = (req, res) => {
 
 }
@@ -501,5 +569,6 @@ module.exports = {
   createPost, getNewPost, viewPost,
   findAddress, getPostFor, findPostForValue,
   getPostForUser, deletePost, liked,
-  repairPost
+  repairPost, deleteImagePost,
+  deleteUtilitie
 };

@@ -120,6 +120,34 @@
     auth: true
     *DELETE: localhost:7777/posts/delete/231a9df3-6cf7-46c1-a725-619b5b26c27b
 
+    * reqair data post
+    auth: true
+    *POST: localhost:7777/posts/repair/c1b5a818-0aec-49d3-8880-f588d349ca17 (postId)
+    from-data:{
+        postType,
+        area,
+        title,
+        price,
+        deposit,
+        roomTypeId,
+        phone,
+        waterCost,
+        electricityCost,
+        description,
+        address,
+        wardId,
+        latitude,
+        longitude,
+        utilityIds,
+        images
+    } can sua cai gi thi them vao cai do rieng utilitiIds, images chi them
+    muon xoa xem api ben duoi
+
+    * delete image
+    auth: true
+    *DELETE: localhost:7777/posts/image?nameImage=20b5983f2e716bde9964d9b5d3ed3ed8&postId=c1b5a818-0aec-49d3-8880-f588d349ca17
+    
+
 ***service
     *create_service
     auth:true
