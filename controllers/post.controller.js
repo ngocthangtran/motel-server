@@ -3,7 +3,7 @@ const { Op } = require('sequelize');
 const { unlink } = require('fs')
 
 const converData = data => data.map(item => {
-  const { postId, postType, title, price, area, description, address, Ward: ward, postImages } = item.dataValues
+  const { postId, postType, title, price, area, description, address, Ward: ward, postImages, updatedAt } = item.dataValues
   let linkImage;
   if (postImages[0]) {
     const { name: nameImage } = postImages[0];
@@ -14,13 +14,13 @@ const converData = data => data.map(item => {
   }
   return {
     postId, title, postType, price, area, description, linkImage,
-    address: `${address}, ${ward.name}, ${ward.District.name}, ${ward.District.Province.name}`
+    address: `${address}, ${ward.name}, ${ward.District.name}, ${ward.District.Province.name}`,
+    updatedAt
   }
 }, {})
 
 const createPost = async (req, res) => {
   const { userId } = req.user;
-  console.log(userId)
   const {
     postType,
     area,
@@ -75,7 +75,7 @@ const createPost = async (req, res) => {
 
 const getNewPost = async (req, res) => {
   const FOR_RENT_clauses = {
-    attributes: ["postId", "postType", "title", "price", "area", "description", "address"],
+    attributes: ["postId", "postType", "title", "price", "area", "description", "address", "updatedAt"],
     include: [
       {
         attributes: ['name'],
@@ -104,7 +104,7 @@ const getNewPost = async (req, res) => {
     limit: 10,
   };
   const FOR_SHARE_clauses = {
-    attributes: ["postId", "postType", "title", "price", "area", "description", "address"],
+    attributes: ["postId", "postType", "title", "price", "area", "description", "address", "updatedAt"],
     include: [
       {
         attributes: ['name'],
@@ -213,7 +213,9 @@ const viewPost = async (req, res) => {
         postImages: images, utility: postutilities
       }
     }
-    res.send(converData(post))
+    res.send({
+      data: post.length !== 0 ? converData(post) : []
+    })
   } catch (error) {
     console.log(error)
     res.status(500).send(error)
@@ -293,7 +295,7 @@ const findPostForValue = async (req, res) => {
     where wards.districtId = districts.districtId and districts.provinceId = provinces.provinceId) myAddress,
     (
     select wards.wardId, 
-    posts.postId, posts.title, posts.address, posts.postType, posts.price, posts.area, posts.description, post_images.name as nameImgae, posts.createdAt, posts.roomTypeId
+    posts.postId, posts.title, posts.address, posts.postType, posts.price, posts.area, posts.description, post_images.name as nameImgae, posts.createdAt, posts.roomTypeId, posts.updatedAt
     from motel.wards, motel.posts, motel.post_images
     where wards.wardId = posts.wardId and posts.postId = post_images.postId
     group by postId
@@ -334,7 +336,7 @@ const getPostFor = async (req, res) => {
   const { postType, page } = req.query;
   try {
     const clauses = {
-      attributes: ["postId", "postType", "title", "price", "area", "description", "address"],
+      attributes: ["postId", "postType", "title", "price", "area", "description", "address", "updatedAt"],
       include: [
         {
           attributes: ['name'],
@@ -380,7 +382,7 @@ const getPostFor = async (req, res) => {
 const getPostForUser = async (req, res) => {
   const { userId } = req.user
   const clauses = {
-    attributes: ["postId", "postType", "title", "price", "area", "description", "address"],
+    attributes: ["postId", "postType", "title", "price", "area", "description", "address", "updatedAt"],
     include: [
       {
         model: User,
@@ -422,6 +424,32 @@ const getPostForUser = async (req, res) => {
   } catch (error) {
 
   }
+}
+
+const repairPost = async (req, res) => {
+  const { postId } = req.params
+  const {
+    postType,
+    area,
+    title,
+    price,
+    deposit,
+    roomTypeId,
+    phone,
+    waterCost,
+    electricityCost,
+    description,
+    address,
+    wardId,
+    utilityIds,
+    latitude,
+    longitude
+  } = req.body;
+  const images = req.images.map(i => {
+    return {
+      name: i
+    }
+  });
 }
 
 const deletePost = async (req, res) => {
@@ -472,5 +500,6 @@ const liked = (req, res) => {
 module.exports = {
   createPost, getNewPost, viewPost,
   findAddress, getPostFor, findPostForValue,
-  getPostForUser, deletePost, liked
+  getPostForUser, deletePost, liked,
+  repairPost
 };
