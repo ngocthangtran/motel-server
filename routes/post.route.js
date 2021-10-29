@@ -1,6 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth')
-const { createPost, getNewPost, viewPost, findAddress, getPostFor, findPostForValue, getPostForUser, deletePost, repairPost, deleteImagePost } = require('../controllers/post.controller');
+const { createPost, getNewPost, viewPost, findAddress, getPostFor, findPostForValue, getPostForUser, deletePost, repairPost, deleteImagePost, deleteUtilitie } = require('../controllers/post.controller');
 const { validateRoomTypeId } = require('../middleware/validate/roomType');
 const { validateWardId } = require('../middleware/validate/ward');
 const imageResize = require('../middleware/imageResize');
@@ -90,6 +90,10 @@ router.delete('/image',
     deleteImagePost(req, res);
   }
 )
+
+router.delete('/utility', [auth], (req, res) => {
+  deleteUtilitie(req, res);
+})
 
 
 module.exports = router

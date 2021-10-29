@@ -557,8 +557,21 @@ const deleteImagePost = async (req, res) => {
   }
 }
 
-const deleteUtilitie = (req, res) => {
-
+const deleteUtilitie = async (req, res) => {
+  const { postId, utilityId } = req.query;
+  if (!postId || !utilityId) return res.status(400).send({
+    status: 400,
+    message: "postId and utilityId is a pair"
+  })
+  try {
+    const result = await sequelize.query(`delete from motel.posts_utilities where postId="${postId}" and utilityId="${utilityId}"`)
+    res.send({
+      status: 200,
+      message: `delete 1 utilityId:${utilityId}`
+    })
+  } catch (error) {
+    res.status(500).send(error)
+  }
 }
 
 const liked = (req, res) => {
