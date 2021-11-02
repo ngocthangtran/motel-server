@@ -30,8 +30,8 @@ const models = Object.keys(modelDefiners).reduce((models, key) => {
 setAssociations(models);
 
 // seeders - uncomment to seed after tables already exists
-// roomTypeSeeder(models.RoomType);
-// utilitySeeder(models.Utility);
-// FeeBaseOnSeeder(models.FeeBaseOn);
+roomTypeSeeder(models.RoomType);
+utilitySeeder(models.Utility);
+FeeBaseOnSeeder(models.FeeBaseOn);
 
 module.exports = { sequelize, ...models };

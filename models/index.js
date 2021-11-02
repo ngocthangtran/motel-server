@@ -14,6 +14,7 @@ const Bill = require('./bill.model');
 const Bills_services = require('./bills_services');
 const Contracts = require('./contract.model');
 const Renter = require('./renter.model');
+const UserLikePost = require('./userLikePost.model');
 
 module.exports = {
   User,
@@ -26,11 +27,12 @@ module.exports = {
   Building,
   Room,
   Posts,
-  
+
   FeeBaseOn,
   Services,
   Bill,
   Bills_services,
   Contracts,
   Renter,
+  UserLikePost
 };

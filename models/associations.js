@@ -14,7 +14,8 @@ const setAssociations = ({
   Contracts,
   Bill,
   Bills_services,
-  Renter
+  Renter,
+  UserLikePost
 }) => {
   // Room - RoomType
   Room.belongsTo(RoomType, { foreignKey: 'roomTypeId', as: 'roomType' });
@@ -59,7 +60,7 @@ const setAssociations = ({
   Ward.hasOne(Posts, { foreignKey: 'wardId' })
   Posts.belongsTo(Ward, { foreignKey: 'wardId' })
 
-  // post - user
+  // // post - user
   User.hasMany(Posts, { foreignKey: 'userId' });
   Posts.belongsTo(User, { foreignKey: 'userId' });
 
@@ -170,6 +171,19 @@ const setAssociations = ({
   //Renter - user
   User.hasMany(Renter, { foreignKey: 'userId' });
   Renter.belongsTo(User, { foreignKey: "userId" })
+
+  //Post - user (many to many)
+
+  Posts.belongsToMany(User, {
+    through: "user_like_post",
+    foreignKey: "postId",
+    as: "liked"
+  })
+
+  User.belongsToMany(Posts, {
+    through: "user_like_post",
+    foreignKey: "userId",
+  })
 }
 
 module.exports = { setAssociations }

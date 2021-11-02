@@ -150,6 +150,14 @@
     *delete posts_utilitie
     auth: true
     *DELETE: localhost:7777/posts/utility?utilityId=ba5504a9-0c66-4a21-9719-71aa37713d6a&postId=c1b5a818-0aec-49d3-8880-f588d349ca17
+    
+    *like post
+    auth: true,
+    *GET: localhost:7777/posts/liked?postId=5cd7fcf3-8ec3-411d-9b96-795bdf7bfd38
+
+    *unlike post
+    auth: true
+    *GET: localhost:7777/posts/unliked?postId=d94a30a4-f08a-4b3c-a840-3fb86f81f6d4
 
 ***service
     *create_service

@@ -1,12 +1,13 @@
 const express = require('express');
 const auth = require('../middleware/auth')
-const { createPost, getNewPost, viewPost, findAddress, getPostFor, findPostForValue, getPostForUser, deletePost, repairPost, deleteImagePost, deleteUtilitie } = require('../controllers/post.controller');
+const { createPost, getNewPost, viewPost, findAddress, getPostFor, findPostForValue, getPostForUser, deletePost, repairPost, deleteImagePost, deleteUtilitie, liked, test, unLike } = require('../controllers/post.controller');
 const { validateRoomTypeId } = require('../middleware/validate/roomType');
 const { validateWardId } = require('../middleware/validate/ward');
 const imageResize = require('../middleware/imageResize');
 const multer = require('multer');
 const { validateUtilityIds } = require('../middleware/validate/utility');
 const { validatePostId } = require('../middleware/validate/posts');
+const authCheck = require('../middleware/authCheck');
 const router = express.Router();
 
 
@@ -30,11 +31,11 @@ router.post('/',
     createPost(req, res)
   })
 
-router.get('/main', (req, res) => {
+router.get('/main', [authCheck], (req, res) => {
   getNewPost(req, res)
 })
 
-router.get('/viewpost/:postId', (req, res) => {
+router.get('/viewpost/:postId', [authCheck], (req, res) => {
   viewPost(req, res)
 })
 
@@ -42,6 +43,7 @@ router.get('/find',
   [
     // validateWardId,
     // validateRoomTypeId
+    authCheck
   ]
   , (req, res) => {
     const { wardId } = req.query;
@@ -53,7 +55,7 @@ router.get('/find',
   }
 )
 
-router.get('/type', (req, res) => {
+router.get('/type', [authCheck], (req, res) => {
   getPostFor(req, res);
 })
 
@@ -95,5 +97,21 @@ router.delete('/utility', [auth], (req, res) => {
   deleteUtilitie(req, res);
 })
 
+router.get('/liked', [auth, validatePostId],
+  (req, res) => {
+    liked(req, res);
+  }
+)
+
+router.get('/unliked',
+  [auth, validatePostId],
+  (req, res) => {
+    unLike(req, res);
+  }
+)
+
+router.get('/test', (req, res) => {
+  test(req, res);
+})
 
 module.exports = router

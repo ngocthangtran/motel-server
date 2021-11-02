@@ -2,8 +2,10 @@ const { User, Posts, Ward, Province, PostImage, District, Room, Building, RoomTy
 const { Op } = require('sequelize');
 const { unlink } = require('fs')
 
-const converData = data => data.map(item => {
-  const { postId, postType, title, price, area, description, address, Ward: ward, postImages, updatedAt } = item.dataValues
+const converData = (data, user) => data.map(item => {
+  const { postId, postType, title, price, area, description,
+    address, Ward: ward, postImages, updatedAt, liked
+  } = item.dataValues;
   let linkImage;
   if (postImages[0]) {
     const { name: nameImage } = postImages[0];
@@ -12,8 +14,22 @@ const converData = data => data.map(item => {
       thumbUrl: `${process.env.BASE_URL}/assets/${nameImage}_thumb.jpg`,
     }
   }
+
+  let like = false;
+  if (liked) {
+    if (user) {
+      liked.map(el => {
+        if (el.userId === user.userId) {
+          like = true;
+          return
+        }
+      })
+    }
+  }
+  // liked ? liked.length !== 0 ? like = true : like = false : like = false
+
   return {
-    postId, title, postType, price, area, description, linkImage,
+    postId, title, postType, price, area, description, linkImage, like,
     address: `${address}, ${ward.name}, ${ward.District.name}, ${ward.District.Province.name}`,
     updatedAt
   }
@@ -74,8 +90,9 @@ const createPost = async (req, res) => {
 };
 
 const getNewPost = async (req, res) => {
+  const user = req.user;
   const FOR_RENT_clauses = {
-    attributes: ["postId", "postType", "title", "price", "area", "description", "address", "updatedAt"],
+    attributes: ["postId", "postType", "title", "price", "area", "description", "address", "createdAt", "updatedAt"],
     include: [
       {
         attributes: ['name'],
@@ -94,6 +111,12 @@ const getNewPost = async (req, res) => {
             attributes: ['name'],
           }
         }
+      },
+      user ? {
+        model: User,
+        as: "liked",
+      } : {
+        model: User,
       }
     ],
     where: {
@@ -104,7 +127,7 @@ const getNewPost = async (req, res) => {
     limit: 10,
   };
   const FOR_SHARE_clauses = {
-    attributes: ["postId", "postType", "title", "price", "area", "description", "address", "updatedAt"],
+    attributes: ["postId", "postType", "title", "price", "area", "description", "address", "createdAt", "updatedAt"],
     include: [
       {
         attributes: ['name'],
@@ -123,6 +146,12 @@ const getNewPost = async (req, res) => {
             attributes: ['name'],
           }
         }
+      },
+      user ? {
+        model: User,
+        as: "liked",
+      } : {
+        model: User,
       }
     ],
     where: {
@@ -139,9 +168,10 @@ const getNewPost = async (req, res) => {
     const for_share = await Posts.findAll({
       ...FOR_SHARE_clauses
     })
+
     res.send({
-      for_rent: converData(for_rent),
-      for_share: converData(for_share)
+      for_rent: converData(for_rent, user),
+      for_share: converData(for_share, user)
     })
   } catch (error) {
     console.log(error)
@@ -152,6 +182,7 @@ const getNewPost = async (req, res) => {
 
 const viewPost = async (req, res) => {
   const { postId } = req.params
+  const user = req.user;
   try {
     const post = await Posts.findAll({
       include: [
@@ -176,6 +207,9 @@ const viewPost = async (req, res) => {
           model: Utility,
           as: 'postutilities',
           attributes: ["name", "icon"]
+        }, {
+          model: User,
+          as: 'liked'
         }
       ],
       limit: 1,
@@ -183,9 +217,19 @@ const viewPost = async (req, res) => {
         postId
       }
     })
-    const converData = data => {
-      var { postImages, Ward: ward, postutilities, address } = data[0].dataValues;
-
+    const converData = (data, user) => {
+      var { postImages, Ward: ward, postutilities, address, liked } = data[0].dataValues;
+      let like = false;
+      if (liked) {
+        if (user) {
+          liked.map(el => {
+            if (el.userId === user.userId) {
+              like = true;
+              return
+            }
+          })
+        }
+      }
       const images = postImages.map(item => {
         const { name } = item
         return {
@@ -210,11 +254,11 @@ const viewPost = async (req, res) => {
       return {
         ...data[0].dataValues,
         address, ward: ward.name, district: ward.District.name, province: ward.District.Province.name,
-        postImages: images, utility: postutilities
+        postImages: images, utility: postutilities, like
       }
     }
     res.send({
-      data: post.length !== 0 ? converData(post) : []
+      data: post.length !== 0 ? converData(post, user) : []
     })
   } catch (error) {
     console.log(error)
@@ -267,7 +311,7 @@ const findPostForValue = async (req, res) => {
   const {
     value, roomTypeId, postType, sort, page, priceStart, priceEnd, areaStart, areaEnd
   } = req.query;
-
+  console.log(value)
   let valuePrice = `and price BETWEEN ${priceStart} and ${priceEnd}`;
   let valueArea = `and area BETWEEN ${areaStart} and ${areaEnd}`;
   let valueSort;
@@ -311,6 +355,7 @@ const findPostForValue = async (req, res) => {
     ;`
     );
     const dataConvert = data[0].map(element => {
+      // console.log(element);
       const linkImage = {
         url: `${process.env.BASE_URL}/assets/${element.nameImgae}_full.jpg`,
         thumbUrl: `${process.env.BASE_URL}/assets/${element.nameImgae}_thumb.jpg`,
@@ -333,10 +378,11 @@ const findPostForValue = async (req, res) => {
 }
 
 const getPostFor = async (req, res) => {
+  const user = req.user;
   const { postType, page } = req.query;
   try {
     const clauses = {
-      attributes: ["postId", "postType", "title", "price", "area", "description", "address", "updatedAt"],
+      attributes: ["postId", "postType", "title", "price", "area", "description", "address", "createdAt", "updatedAt"],
       include: [
         {
           attributes: ['name'],
@@ -355,6 +401,10 @@ const getPostFor = async (req, res) => {
               attributes: ['name'],
             }
           }
+        },
+        {
+          model: User,
+          as: "liked"
         }
       ],
       where: {
@@ -372,7 +422,7 @@ const getPostFor = async (req, res) => {
     res.send({
       postType,
       count: data.length,
-      data: converData(data)
+      data: converData(data, user)
     })
   } catch (error) {
     res.status(500).send(error)
@@ -574,8 +624,50 @@ const deleteUtilitie = async (req, res) => {
   }
 }
 
-const liked = (req, res) => {
+const liked = async (req, res) => {
+  const { postId } = req.query;
+  const { userId } = req.user;
+  try {
+    const post = await Posts.findOne({
+      include: {
+        model: User
+      },
+      where: {
+        postId
+      }
+    })
+    await post.addLiked(userId);
+    res.send(post)
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
 
+const unLike = async (req, res) => {
+  const { postId } = req.query;
+  const { userId } = req.user
+  try {
+    await sequelize.query(`delete from user_like_posts where postId="${postId}" and userId="${userId}"`);
+    res.send({
+      status: 200,
+      message: `unlike complete`
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).send(error);
+  }
+}
+
+const test = async (req, res) => {
+  const post = await Posts.findAll({
+    include: [
+      {
+        model: User,
+        as: 'liked',
+      }
+    ]
+  })
+  res.send(post)
 }
 
 module.exports = {
@@ -583,5 +675,5 @@ module.exports = {
   findAddress, getPostFor, findPostForValue,
   getPostForUser, deletePost, liked,
   repairPost, deleteImagePost,
-  deleteUtilitie
+  deleteUtilitie, test, unLike
 };
