@@ -3,6 +3,12 @@ const validateUtilityIds = async (req, res, next) => {
   const utilityIds = req.body.utilityIds;
 
   req.utilities = [];
+  
+  if (!utilityIds) return next();
+  if (!Array.isArray(utilityIds)) {
+    utilityIds = [utilityIds];
+  }
+  
   for (utilId of utilityIds) {
     const util = await Utility.findByPk(utilId);
     if (!util)
