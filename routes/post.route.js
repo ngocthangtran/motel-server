@@ -1,6 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth')
-const { createPost, getNewPost, viewPost, findAddress, getPostFor, findPostForValue, getPostForUser, deletePost, repairPost, deleteImagePost, deleteUtilitie, liked, test, unLike } = require('../controllers/post.controller');
+const { createPost, getNewPost, viewPost, findAddress, getPostFor, findPostForValue, getPostForUser, deletePost, repairPost, deleteImagePost, deleteUtilitie, liked, test, unLike, getPostUserLike } = require('../controllers/post.controller');
 const { validateRoomTypeId } = require('../middleware/validate/roomType');
 const { validateWardId } = require('../middleware/validate/ward');
 const imageResize = require('../middleware/imageResize');
@@ -11,7 +11,7 @@ const authCheck = require('../middleware/authCheck');
 const router = express.Router();
 
 
-const MAX_IMAGE_COUNT = 6;
+const MAX_IMAGE_COUNT = 60;
 
 const upload = multer({
   dest: 'uploads/',
@@ -107,6 +107,15 @@ router.get('/unliked',
   [auth, validatePostId],
   (req, res) => {
     unLike(req, res);
+  }
+)
+
+router.get('/userliked',
+  [
+    auth
+  ],
+  (req, res) => {
+    getPostUserLike(req, res);
   }
 )
 

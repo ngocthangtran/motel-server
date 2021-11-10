@@ -1,14 +1,15 @@
 const { Utility } = require('../../db');
 const validateUtilityIds = async (req, res, next) => {
-  const utilityIds = req.body.utilityIds;
-
+  var utilityIds = req.body.utilityIds;
   req.utilities = [];
-  
-  if (!utilityIds) return next();
+  if (!utilityIds) {
+    next()
+    return
+  };
   if (!Array.isArray(utilityIds)) {
     utilityIds = [utilityIds];
   }
-  
+
   for (utilId of utilityIds) {
     const util = await Utility.findByPk(utilId);
     if (!util)

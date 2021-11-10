@@ -50,10 +50,12 @@ const createPost = async (req, res) => {
     description,
     address,
     wardId,
-    utilityIds,
+
     latitude,
     longitude
-  } = req.body
+  } = req.body;
+
+  const utilityIds = req.utilities
 
   const images = req.images.map(i => {
     return {
@@ -85,6 +87,7 @@ const createPost = async (req, res) => {
     await post.addPostutilities(utilityIds)
     res.send(post)
   } catch (error) {
+    console.log(error)
     res.status(500).send(error)
   }
 };
@@ -311,7 +314,6 @@ const findPostForValue = async (req, res) => {
   const {
     value, roomTypeId, postType, sort, page, priceStart, priceEnd, areaStart, areaEnd
   } = req.query;
-  console.log(value)
   let valuePrice = `and price BETWEEN ${priceStart} and ${priceEnd}`;
   let valueArea = `and area BETWEEN ${areaStart} and ${areaEnd}`;
   let valueSort;
@@ -658,6 +660,70 @@ const unLike = async (req, res) => {
   }
 }
 
+const getPostUserLike = async (req, res) => {
+  const { userId } = req.user;
+  var { page } = req.query
+  if (!page) {
+    page = 1
+  }
+  try {
+    const clauses = {
+      attributes: ["postId", "postType", "title", "price", "area", "description", "address", "createdAt", "updatedAt"],
+      include: [
+        {
+          attributes: ['name'],
+          model: PostImage,
+          as: 'postImages',
+          limit: 1
+        },
+        {
+          attributes: ['name'],
+          model: Ward,
+          include: {
+            attributes: ['name'],
+            model: District,
+            include: {
+              model: Province,
+              attributes: ['name'],
+            }
+          }
+        },
+        {
+          model: User,
+          as: "liked",
+          where: {
+            userId
+          }
+        }
+      ],
+
+      order: [['createdAt', 'DESC']],
+      offset: page * 10 - 10,
+      limit: 10,
+    };
+    const post = await Posts.findAll({
+      ...clauses
+    })
+    if (post.length != 0) {
+      return res.send({
+        count: post.length,
+        data: converData(post, req.user)
+      })
+    }
+    res.send({
+      count: 0,
+      data: []
+    })
+  } catch (error) {
+    console.log("error at get user's posts like")
+    console.log(error)
+    res.status(500).send({
+      status: 500,
+      message: "Error", error
+    })
+  }
+}
+
 const test = async (req, res) => {
   const post = await Posts.findAll({
     include: [
@@ -675,5 +741,5 @@ module.exports = {
   findAddress, getPostFor, findPostForValue,
   getPostForUser, deletePost, liked,
   repairPost, deleteImagePost,
-  deleteUtilitie, test, unLike
+  deleteUtilitie, test, unLike, getPostUserLike
 };

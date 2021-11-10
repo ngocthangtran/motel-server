@@ -1,6 +1,6 @@
 const { Renter } = require('../../db');
 
-const validateRenter = async (req, res, next) => {
+const validateRenters = async (req, res, next) => {
     const renterIds = req.body.renterIds || req.params.renterIds;
     if (!renterIds) return res.status(400).send({ message: "renterID is required" });
     for (renterId of renterIds) {
@@ -13,4 +13,16 @@ const validateRenter = async (req, res, next) => {
     next();
 }
 
-module.exports = { validateRenter }
+const validateRenter = async (req, res, next) => {
+    const renterId = req.body.renterId || req.params.renterId;
+    if (!renterId) return res.status(400).send({ message: "renterID is required" });
+    const renter = await Renter.findByPk(renterId);
+    if (!renter)
+        return res
+            .status(400)
+            .send({ error: 'cannot find renter with id ' + renterId });
+
+    next();
+}
+
+module.exports = { validateRenters, validateRenter }

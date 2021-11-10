@@ -36,7 +36,7 @@ router.get('/delete/:renterId',
         validateRenter
     ],
     (req, res) => {
-        deleteRenter(req, res)
+        deleteRenters(req, res)
     }
 )
 

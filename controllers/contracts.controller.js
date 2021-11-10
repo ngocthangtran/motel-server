@@ -205,6 +205,14 @@ const repairContracts = async (req, res) => {
     }
 }
 
+const deleteServiceOnContract = (req, res) => {
+
+}
+
+const deleteRenterOnContract = (req, res) => {
+
+}
+
 module.exports = {
     createContracts,
     getAllContract,
