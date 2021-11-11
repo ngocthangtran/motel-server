@@ -1,0 +1,78 @@
+[
+    {
+        "contractId": "356826e7-8a6f-4cc7-88bb-c96237b79894",
+        "userId": "e493adc1-cd37-4055-a965-b0cecede3373",
+        "roomId": "d9419439-8c62-45dc-9d80-d9a03efc4dee",
+        "startAt": "2021-01-20",
+        "endAt": null,
+        "paymentCycle": "1 thang",
+        "price": "1000000.00",
+        "deposit": "500000.00",
+        "status": false,
+        "createdAt": "2021-11-11T04:05:05.000Z",
+        "updatedAt": "2021-11-11T04:05:05.000Z",
+        "User": {
+            "userId": "e493adc1-cd37-4055-a965-b0cecede3373"
+        },
+        "Room": {
+            "roomId": "d9419439-8c62-45dc-9d80-d9a03efc4dee",
+            "buildingId": "4679c6de-ca06-4783-b938-1a230b2113e1",
+            "area": 20,
+            "name": "phong so 2",
+            "deposit": "500000.00",
+            "status": false,
+            "roomTypeId": "1a2769d0-f60a-4f90-8652-b98ba92cc235",
+            "createdAt": "2021-11-11T03:53:52.000Z",
+            "updatedAt": "2021-11-11T03:53:52.000Z",
+            "Building": {
+                "buildingId": "4679c6de-ca06-4783-b938-1a230b2113e1",
+                "name": "Căn nhà ở bình chuan",
+                "address": "29/20 khu phố Bình Phú",
+                "openTime": null,
+                "closeTime": null,
+                "wardId": "00006",
+                "createdAt": "2021-11-11T03:53:40.000Z",
+                "updatedAt": "2021-11-11T03:53:40.000Z",
+                "userId": "e493adc1-cd37-4055-a965-b0cecede3373"
+            }
+        }
+    },
+    {
+        "contractId": "e989d825-d8d8-4c51-8e98-4e04663c59e1",
+        "userId": "e493adc1-cd37-4055-a965-b0cecede3373",
+        "roomId": "d9419439-8c62-45dc-9d80-d9a03efc4dee",
+        "startAt": "2021-01-20",
+        "endAt": "2023-06-02",
+        "paymentCycle": "1 thang",
+        "price": "1000000.00",
+        "deposit": "500000.00",
+        "status": false,
+        "createdAt": "2021-11-11T03:55:17.000Z",
+        "updatedAt": "2021-11-11T03:55:17.000Z",
+        "User": {
+            "userId": "e493adc1-cd37-4055-a965-b0cecede3373"
+        },
+        "Room": {
+            "roomId": "d9419439-8c62-45dc-9d80-d9a03efc4dee",
+            "buildingId": "4679c6de-ca06-4783-b938-1a230b2113e1",
+            "area": 20,
+            "name": "phong so 2",
+            "deposit": "500000.00",
+            "status": false,
+            "roomTypeId": "1a2769d0-f60a-4f90-8652-b98ba92cc235",
+            "createdAt": "2021-11-11T03:53:52.000Z",
+            "updatedAt": "2021-11-11T03:53:52.000Z",
+            "Building": {
+                "buildingId": "4679c6de-ca06-4783-b938-1a230b2113e1",
+                "name": "Căn nhà ở bình chuan",
+                "address": "29/20 khu phố Bình Phú",
+                "openTime": null,
+                "closeTime": null,
+                "wardId": "00006",
+                "createdAt": "2021-11-11T03:53:40.000Z",
+                "updatedAt": "2021-11-11T03:53:40.000Z",
+                "userId": "e493adc1-cd37-4055-a965-b0cecede3373"
+            }
+        }
+    }
+]

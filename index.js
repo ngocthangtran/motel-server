@@ -10,6 +10,7 @@ const suggestions = require('./routes/suggestions.router');
 const service = require('./routes/services.router');
 const contracts = require('./routes/contracts.route');
 const renter = require('./routes/renter.router');
+const manage = require('./routes/manage.route');
 
 const port = process.env.PORT || 7777;
 const app = express();
@@ -34,7 +35,8 @@ app.use('/room', roomRouter);
 app.use('/suggestions', suggestions);
 app.use('/service', service);
 app.use('/contract', contracts);
-app.use('/renter', renter)
+app.use('/renter', renter);
+app.use('/manage', manage);
 
 
 app.listen(port, async () => {

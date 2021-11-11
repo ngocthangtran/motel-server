@@ -159,6 +159,10 @@
     auth: true
     *GET: localhost:7777/posts/unliked?postId=d94a30a4-f08a-4b3c-a840-3fb86f81f6d4
 
+    *get user's post like
+    auth: true
+    *GET: localhost:7777/posts/userliked?page=2
+
 ***service
     *create_service
     auth:true
