@@ -1,4 +1,4 @@
-const { Contracts, User, Room, Services, Renter } = require('../db');
+const { Contracts, User, Room, Services, Renter, sequelize } = require('../db');
 
 const convertDate = (date) => {
     const today = new Date(date)
@@ -205,12 +205,50 @@ const repairContracts = async (req, res) => {
     }
 }
 
-const deleteServiceOnContract = (req, res) => {
-
+const removeServiceRenter = async (req, res) => {
+    const { serviceId, renterId } = req.body
+    const { contractId } = req.params;
+    try {
+        let sql;
+        sql = `delete from motel.contract_renter where renterId="${renterId}" and contractId="${contractId}"`
+        if (serviceId) {
+            sql = `delete from motel.contracts_services where serviceId="${serviceId}" and contractId="${contractId}"`
+        }
+        const result = await sequelize.query(sql);
+        res.send({
+            status: 200,
+            message: "remove complete"
+        })
+    } catch (error) {
+        res.status(500).send({
+            status: 500,
+            message: "Loi"
+        })
+    }
 }
 
-const deleteRenterOnContract = (req, res) => {
-
+const deleteContract = async (req, res) => {
+    const { contractId } = req.params;
+    try {
+        const contract = await Contracts.findOne({
+            include: [
+                "contractServices", "contractRenter"
+            ],
+            where: {
+                contractId
+            }
+        })
+        contract.destroy();
+        res.send({
+            message: `delete complete with contractId: ${contractId}`
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            status: 500,
+            message: "error"
+        })
+    }
 }
 
 module.exports = {
@@ -218,5 +256,7 @@ module.exports = {
     getAllContract,
     getAContract,
     terminateContract,
-    repairContracts
+    repairContracts,
+    removeServiceRenter,
+    deleteContract
 }
