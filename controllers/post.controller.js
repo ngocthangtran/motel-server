@@ -213,6 +213,9 @@ const viewPost = async (req, res) => {
         }, {
           model: User,
           as: 'liked'
+        },
+        {
+          model: User
         }
       ],
       limit: 1,
@@ -221,7 +224,8 @@ const viewPost = async (req, res) => {
       }
     })
     const converData = (data, user) => {
-      var { postImages, Ward: ward, postutilities, address, liked } = data[0].dataValues;
+      var { postImages, Ward: ward, postutilities, address, liked, User: user } = data[0].dataValues;
+
       let like = false;
       if (liked) {
         if (user) {
@@ -252,9 +256,14 @@ const viewPost = async (req, res) => {
       delete data[0].dataValues.Ward
       delete data[0].dataValues.wardId
       delete data[0].dataValues.createdAt
+      delete data[0].dataValues.User
+      delete data[0].dataValues.liked
+
 
       return {
         ...data[0].dataValues,
+        userPostName: user.name,
+        userPostImage: user.avatar,
         address, ward: ward.name, district: ward.District.name, province: ward.District.Province.name,
         postImages: images, utility: postutilities, like
       }
