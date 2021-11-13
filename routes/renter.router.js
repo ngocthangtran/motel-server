@@ -30,7 +30,7 @@ router.post('/repair',
     }
 )
 
-router.get('/delete/:renterId',
+router.delete('/delete/:renterId',
     [
         auth,
         validateRenter

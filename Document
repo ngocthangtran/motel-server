@@ -177,3 +177,141 @@
     *Get_service_for_user
     auth:true
     GET: localhost:7777/service/user
+
+    *Get service for building
+    auth: true
+    GET: localhost:7777/service/building/:buildingId
+
+    *delete service 
+    auth: true
+    DELETE: localhost:7777/service/delete/:serviceId
+
+***Renter
+    *create renter
+    auth: true,
+    POST: localhost:7777/renter/create
+    body: {
+    "name":"Chung Thanh Huy",
+    "phone":"0965198994",
+    "birthday":"1999-01-10",
+    "numberCard":"152243096",
+    "issuedOn":"2014-03-01"
+    }
+
+    *get renter for user
+    auth: true
+    GET: localhost:7777/renter/
+
+    *Repair renter
+    auth: true,
+    POST: localhost:7777/renter/repair
+    body: {
+        "name":"Nguyen Chi Tuong",
+        "phone":"0965198994",
+        "birthday":"1999-01-10",
+        "numberCard":"152243096",
+        "issuedOn":"2014-03-01",
+        "renterId":"2578f560-381b-43d3-9dfd-53f9e6eea0f8"
+    } can gi sua day
+
+    *delete renter
+    auth: true
+    DELETE: localhost:7777/renter/delete/:renterId
+
+***Contract
+    *create contract
+    auth: true
+    POST: localhost:7777/contract/create
+    body: {
+        "roomId": "3d02cbdd-15db-4a42-9f72-5d88012f1afb",
+        "startAt": "2021-01-20",
+        "paymentCycle": "1 thang",
+        "price": "1000000",
+        "deposit": "500000",
+        "serviceIds": [
+            "f20f3640-6c50-45e9-bb72-1163507dd687"
+        ],
+        "renterIds": [
+            "d2e69566-a8e0-43da-b7f1-22ef8eb7dc52"
+        ]
+    }
+
+    *get all contract for user
+    auth: true,
+    GET: localhost:7777/contract
+
+    *get a contract
+    auth: true,
+    GET: localhost:7777/contract/:contractId
+
+    *terminate contract
+    auth: true,
+    GET: localhost:7777/contract/terminate/contractId
+
+    *repair contract
+    auth: true
+    POST: localhost:7777/contract/repair/:contractId
+    body: {
+        "roomId": "3d02cbdd-15db-4a42-9f72-5d88012f1afb",
+        "startAt": "2021-01-20",
+        "paymentCycle": "1 thang",
+        "price": "1000000",
+        "deposit": "500000",
+        "serviceIds": [
+            "f20f3640-6c50-45e9-bb72-1163507dd687",
+            "481dac1d-6f90-4216-9487-edddd74a960c"
+        ],
+        "renterIds": [
+            "d2e69566-a8e0-43da-b7f1-22ef8eb7dc52"
+        ]
+    }
+    can gi sua day nhung muon xoa renter hoac service dung api duoi
+
+    *remove renter or service id on contract
+    auth: true
+    DELETE: localhost:7777/contract/remove/:contractId
+    body:{
+        "serviceId":"" or "renterId":""
+    }
+    chi truyen vao mot gia tri de xoa tuong ung
+
+    *delete contract
+    auth: true
+    DELETE: localhost:7777/contract/delete/:contractId
+
+***Manager
+    *get all room on all billding
+    auth: true,
+    GET: localhost:7777/manage/contract/effective
+
+    * get service of Room
+    auth: true
+    GET: localhost:7777/manage/roomservice?roomId=d9419439-8c62-45dc-9d80-d9a03efc4dee&month=2&year=2021
+
+    * single closing
+    auth: true
+    POST: localhost:7777/manage/singleclosing/
+    body{
+        "date": "2021-02-01",
+        "contractId": "e989d825-d8d8-4c51-8e98-4e04663c59e1",
+        "services": [
+            {
+                "lastValue": "123",
+                "currentValue": "456",
+                "quantily": null,
+                "serviceId": "481dac1d-6f90-4216-9487-edddd74a960c"
+            },
+            {
+                "lastValue": "123",
+                "currentValue": "789",
+                "quantily": null,
+                "serviceId": "a297b23b-c351-452c-a129-c56fa02a465b"
+            },
+            {
+                "lastValue": "123",
+                "currentValue": "987",
+                "quantily": null,
+                "serviceId": "f20f3640-6c50-45e9-bb72-1163507dd687"
+            }
+        ]
+    }

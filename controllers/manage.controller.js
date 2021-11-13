@@ -1,4 +1,7 @@
-const { Contracts, User, Room, Building, Province, Ward, District } = require('../db');
+const { Op } = require('sequelize');
+const { Contracts, User, Room, Building, Province, Ward, District, Services,
+    FeeBaseOn, Bills_services, sequelize
+} = require('../db');
 
 const convertDate = (date) => {
     const today = new Date(date)
@@ -22,7 +25,6 @@ const getContractTakeEffect = async (req, res) => {
                 {
                     model: User,
                     attributes: ['userId'],
-                    group: ['user.userId'],
                     where: {
                         userId
                     }
@@ -84,6 +86,124 @@ const getContractTakeEffect = async (req, res) => {
     }
 }
 
+const serviceOfRoom = async (req, res) => {
+    const { roomId, month, year } = req.query
+    try {
+        const service = await Contracts.findOne({
+            include: [
+                {
+                    model: Room,
+                    attributes: ['name']
+                },
+                {
+                    model: Services,
+                    as: "contractServices",
+                    include: {
+                        model: FeeBaseOn,
+                        as: "createFeeBasseOn"
+                    },
+                    attributes: ["name", "serviceId", "price", "unit", "startValue"]
+                },
+            ],
+            where: {
+                roomId,
+            },
+        })
+
+        var bill_service = await Bills_services.findAll({
+            where: {
+                [Op.and]: [
+                    sequelize.where(sequelize.fn("MONTH", sequelize.col('date')), month),
+                    sequelize.where(sequelize.fn("YEAR", sequelize.col('date')), year),
+                    { contractId: service.contractId },
+                ],
+            },
+            group: ['serviceId'],
+        })
+        var maxDate = await Bills_services.findOne({
+            attributes: [[sequelize.fn('max', sequelize.col('date')), 'max']],
+            where: {
+                contractId: service.contractId
+            },
+            group: ['serviceId'],
+        })
+        if (bill_service.length === 0 && maxDate) {
+            console.log("maxDate")
+            maxDate = maxDate.dataValues.max
+            bill_service = await Bills_services.findAll({
+                where: {
+                    [Op.and]: [
+                        { date: maxDate },
+                        { contractId: service.contractId },
+                    ],
+                },
+                group: ['serviceId'],
+            })
+        }
+        const convert = (dataService, dataBill) => {
+            const {
+                Room: room, contractServices
+            } = dataService
+            const service = contractServices.map(el => {
+                const { name, serviceId, price, unit, startValue } = el;
+                const a = dataBill.findIndex(el => el.serviceId === serviceId)
+                if (a === -1) {
+                    return { name, serviceId, price, unit, lastValue: startValue }
+                }
+                return { name, serviceId, price, unit, lastValue: dataBill[a].currentValue }
+            })
+
+            const data = {
+                roomName: room.name,
+                service
+            }
+            return data
+        }
+        res.send(convert(service, bill_service))
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send(error)
+    }
+}
+
+const singleClosing = async (req, res) => {
+    const { date, contractId, services } = req.body;
+    const listService = services.map(el => {
+        return {
+            ...el,
+            date, contractId
+        }
+    })
+    try {
+        const newDate = new Date(date);
+        const checkMonth = await Bills_services.findOne({
+            where: {
+                [Op.and]: [
+                    sequelize.where(sequelize.fn("MONTH", sequelize.col('date')), newDate.getMonth() + 1),
+                    sequelize.where(sequelize.fn("YEAR", sequelize.col('date')), newDate.getFullYear()),
+                    { contractId: contractId },
+                ],
+            }
+        })
+        if (!checkMonth) {
+            const results = await Bills_services.bulkCreate(listService);
+            return res.send(results)
+        }
+        return res.status(400).send({
+            status:400,
+            message:"This month's service has been closed"
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            status: 500,
+            message: "error"
+        })
+    }
+}
+
 module.exports = {
-    getContractTakeEffect
+    getContractTakeEffect, singleClosing,
+    serviceOfRoom
 }
