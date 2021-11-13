@@ -252,7 +252,6 @@ const viewPost = async (req, res) => {
       delete data[0].dataValues.Ward
       delete data[0].dataValues.wardId
       delete data[0].dataValues.createdAt
-      delete data[0].dataValues.updatedAt
 
       return {
         ...data[0].dataValues,
