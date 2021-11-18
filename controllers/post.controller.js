@@ -4,7 +4,7 @@ const { unlink } = require('fs')
 
 const converData = (data, user) => data.map(item => {
   const { postId, postType, title, price, area, description,
-    address, Ward: ward, postImages, updatedAt, liked
+    address, Ward: ward, postImages, updatedAt, liked, longitude, latitude, distance
   } = item.dataValues;
   let linkImage;
   if (postImages[0]) {
@@ -31,7 +31,7 @@ const converData = (data, user) => data.map(item => {
   return {
     postId, title, postType, price, area, description, linkImage, like,
     address: `${address}, ${ward.name}, ${ward.District.name}, ${ward.District.Province.name}`,
-    updatedAt
+    updatedAt, latitude, longitude, distance
   }
 }, {})
 
@@ -732,8 +732,83 @@ const getPostUserLike = async (req, res) => {
   }
 }
 
+const findLocation = async (req, res) => {
+  const distance = req.query.distance || 5
+  const user = req.user;
+  const { page,
+    latitude,
+    longitude,
+  } = req.query;
+
+  try {
+    const clauses = {
+      attributes: ["postId", "postType", "title", "price", "area", "description", "address", "createdAt", "updatedAt",
+        "latitude", "longitude",
+        [
+          sequelize.literal(` 6371 * acos( cos( radians(${latitude}) ) * cos( radians( latitude ) ) * 
+         cos( radians( longitude ) - radians(${longitude}) ) + sin( radians(${latitude}) ) * 
+         sin( radians( latitude ) ) )`), 'distance'
+        ]
+      ],
+      include: [
+        {
+          attributes: ['name'],
+          model: PostImage,
+          as: 'postImages',
+          limit: 1
+        },
+        {
+          attributes: ['name'],
+          model: Ward,
+          include: {
+            attributes: ['name'],
+            model: District,
+            include: {
+              model: Province,
+              attributes: ['name'],
+            }
+          }
+        },
+        {
+          model: User,
+          as: "liked"
+        }
+      ],
+      order: sequelize.literal('distance'),
+      offset: page * 10 - 10,
+      limit: 10,
+      having: sequelize.literal(`distance < ${distance}`),
+    };
+
+    const data = await Posts.findAll({
+      ...clauses
+    })
+
+    res.send({
+      count: data.length,
+      data: converData(data, user)
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).send(error)
+  }
+}
+
 const test = async (req, res) => {
   const post = await Posts.findAll({
+    attributes: ["postId", "postType", "title", "price", "area", "description", "address", "createdAt", "updatedAt",
+      [sequelize.literal(` 6371 * acos( cos( radians(10.987229) ) * cos( radians( latitude ) ) * 
+         cos( radians( longitude ) - radians(106.716486) ) + sin( radians(10.987229) ) * 
+         sin( radians( latitude ) ) )`), 'test'
+      ]
+    ],
+    // attributes: {
+    //   include: [
+    //     [sequelize.literal(` 6371 * acos( cos( radians(10.987229) ) * cos( radians( latitude ) ) * 
+    //     cos( radians( longitude ) - radians(106.716486) ) + sin( radians(10.987229) ) * 
+    //     sin( radians( latitude ) ) )`), 'sdsa']
+    //   ]
+    // },
     include: [
       {
         model: User,
@@ -749,5 +824,6 @@ module.exports = {
   findAddress, getPostFor, findPostForValue,
   getPostForUser, deletePost, liked,
   repairPost, deleteImagePost,
-  deleteUtilitie, test, unLike, getPostUserLike
+  deleteUtilitie, test, unLike, getPostUserLike,
+  findLocation
 };

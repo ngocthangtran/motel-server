@@ -163,6 +163,10 @@
     auth: true
     *GET: localhost:7777/posts/userliked?page=2
 
+    *find location
+    auth:true or false
+    *GET: localhost:7777/posts/location?distance=2000&page=1&latitude=13.136358&longitude=108.416783
+
 ***service
     *create_service
     auth:true

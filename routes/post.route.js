@@ -1,6 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth')
-const { createPost, getNewPost, viewPost, findAddress, getPostFor, findPostForValue, getPostForUser, deletePost, repairPost, deleteImagePost, deleteUtilitie, liked, test, unLike, getPostUserLike } = require('../controllers/post.controller');
+const { createPost, getNewPost, viewPost, findAddress, getPostFor, findPostForValue, getPostForUser, deletePost, repairPost, deleteImagePost, deleteUtilitie, liked, test, unLike, getPostUserLike, findLocation } = require('../controllers/post.controller');
 const { validateRoomTypeId } = require('../middleware/validate/roomType');
 const { validateWardId } = require('../middleware/validate/ward');
 const imageResize = require('../middleware/imageResize');
@@ -118,9 +118,15 @@ router.get('/userliked',
     getPostUserLike(req, res);
   }
 )
+router.get('/location', [
+  authCheck
+], (req, res) => {
+  findLocation(req, res);
+})
 
 router.get('/test', (req, res) => {
   test(req, res);
 })
+
 
 module.exports = router
