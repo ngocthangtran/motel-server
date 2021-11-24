@@ -128,7 +128,6 @@ const serviceOfRoom = async (req, res) => {
             group: ['serviceId'],
         })
         if (bill_service.length === 0 && maxDate) {
-            console.log("maxDate")
             maxDate = maxDate.dataValues.max
             bill_service = await Bills_services.findAll({
                 where: {
@@ -142,7 +141,7 @@ const serviceOfRoom = async (req, res) => {
         }
         const convert = (dataService, dataBill) => {
             const {
-                Room: room, contractServices
+                Room: room, contractServices, contractId
             } = dataService
             const service = contractServices.map(el => {
                 const { name, serviceId, price, unit, startValue } = el;
@@ -154,6 +153,7 @@ const serviceOfRoom = async (req, res) => {
             })
 
             const data = {
+                contractId,
                 roomName: room.name,
                 service
             }
@@ -177,7 +177,7 @@ const singleClosing = async (req, res) => {
     })
     try {
         const newDate = new Date(date);
-        const checkMonth = await Bills_services.findOne({
+        const checkBillExistsMonth = await Bills_services.findOne({
             where: {
                 [Op.and]: [
                     sequelize.where(sequelize.fn("MONTH", sequelize.col('date')), newDate.getMonth() + 1),
@@ -186,13 +186,30 @@ const singleClosing = async (req, res) => {
                 ],
             }
         })
-        if (!checkMonth) {
+        const getFirstMonthForContract = await Bills_services.findOne({
+            attributes: [[sequelize.fn('max', sequelize.col('date')), 'max']],
+            where: {
+                contractId
+            }
+        })
+
+        const oldDate = new Date(getFirstMonthForContract.dataValues.max)
+
+
+
+        if (!checkBillExistsMonth) {
+            if (newDate.getTime() < oldDate.getTime()) {
+                return res.status(400).send({
+                    status: 400,
+                    message: "service has been closed"
+                })
+            }
             const results = await Bills_services.bulkCreate(listService);
             return res.send(results)
         }
         return res.status(400).send({
-            status:400,
-            message:"This month's service has been closed"
+            status: 400,
+            message: "This month's service has been closed"
         })
     } catch (error) {
         console.log(error)

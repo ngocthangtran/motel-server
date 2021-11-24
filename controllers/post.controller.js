@@ -387,6 +387,77 @@ const findPostForValue = async (req, res) => {
   }
 }
 
+const findPostV2 = async (req, res) => {
+  const user = req.user;
+  const {
+    value, roomTypeId, postType, sort, page, priceStart, priceEnd, areaStart, areaEnd
+  } = req.query;
+
+  const data = await Posts.findAll({
+    include: [
+      {
+        model: Ward,
+        include: {
+          model: District,
+          include: Province
+        }
+      },
+      {
+        model: PostImage,
+        as: "postImages"
+      },
+      user ? {
+        model: User,
+        as: "liked",
+      } : {
+        model: User,
+      }
+    ],
+    where: {
+      [Op.and]: [
+        sequelize.literal(`MATCH (title, address) AGAINST ('"${value}"' IN BOOLEAN MODE)`),
+        postType ? { postType } : undefined,
+        roomTypeId ? { roomTypeId } : undefined,
+        priceStart ? sequelize.literal(`price BETWEEN ${priceStart} and ${priceEnd}`) : undefined,
+        areaStart ? sequelize.literal(`area BETWEEN ${areaStart} and ${areaEnd}`) : undefined
+      ]
+    },
+    order: sort ? sort === 'SORT_UP' ? [['price', 'ASC']] : [['price', 'DESC']] : [['createdAt', 'DESC']]
+  })
+  const dataConvert = data.map(element => {
+    const linkImage = {
+      url: `${process.env.BASE_URL}/assets/${element.dataValues.postImages[0].name}_full.jpg`,
+      thumbUrl: `${process.env.BASE_URL}/assets/${element.dataValues.postImages[0].name}_thumb.jpg`,
+    }
+    delete element.dataValues.nameImgae;
+    delete element.dataValues.createdAt;
+    delete element.dataValues.roomTypeId;
+    delete element.dataValues.Ward;
+    delete element.dataValues.postImages;
+
+    const { liked } = element.dataValues;
+    let like = false;
+    if (liked) {
+      if (user) {
+        liked.map(el => {
+          if (el.userId === user.userId) {
+            like = true;
+            return
+          }
+        })
+      }
+    }
+    return {
+      ...element.dataValues,
+      linkImage, like
+    }
+  });
+  res.send({
+    count: data.length,
+    data: dataConvert
+  })
+}
+
 const getPostFor = async (req, res) => {
   const user = req.user;
   const { postType, page } = req.query;
@@ -566,9 +637,15 @@ const deletePost = async (req, res) => {
       include: ['postutilities', 'postImages'],
       where: {
         postId,
-        userId
+        // userId
       }
     })
+    if (!post) {
+      return res.status(403).send({
+        status: 403,
+        message: "The post does not belong to the user"
+      })
+    }
     post.dataValues.postImages.forEach(element => {
       nameImage.push(`${element.name}_full.jpg`)
       nameImage.push(`${element.name}_thumb.jpg`)
@@ -825,5 +902,5 @@ module.exports = {
   getPostForUser, deletePost, liked,
   repairPost, deleteImagePost,
   deleteUtilitie, test, unLike, getPostUserLike,
-  findLocation
+  findLocation, findPostV2
 };
