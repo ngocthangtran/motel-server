@@ -1,4 +1,4 @@
-const { Contracts, User, Room, Services, Renter, sequelize } = require('../db');
+const { Contracts, User, Room, Services, Renter, sequelize, ContractService } = require('../db');
 
 const convertDate = (date) => {
     const today = new Date(date)
@@ -24,9 +24,24 @@ const createContracts = async (req, res) => {
 
     try {
         const contract = await Contracts.create({
-            userId, roomId, startAt, endAt, paymentCycle, price, deposit
+            userId,
+            roomId,
+            startAt,
+            endAt,
+            paymentCycle,
+            price,
+            deposit
         })
-        await contract.addContractServices(serviceIds);
+        const contractService = serviceIds.map(el => {
+            const { contractId } = contract.dataValues;
+            el.contractId = contractId
+            return el;
+        })
+
+        await ContractService.bulkCreate(
+            contractService
+        )
+
         await contract.addContractRenter(renterIds)
         res.send(contract)
     } catch (error) {

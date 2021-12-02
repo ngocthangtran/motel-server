@@ -16,7 +16,7 @@ const validateServiceId = async (req, res, next) => {
 const validateServiceArr = async (req, res, next) => {
     const serviceIds = req.body.serviceIds;
     for (serviceId of serviceIds) {
-        const service = await Services.findByPk(serviceId);
+        const service = await Services.findByPk(serviceId.serviceId);
         if (!service)
             return res
                 .status(400)

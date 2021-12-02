@@ -15,6 +15,7 @@ const Bills_services = require('./bills_services');
 const Contracts = require('./contract.model');
 const Renter = require('./renter.model');
 const UserLikePost = require('./userLikePost.model');
+const ContractService = require('./contract_service.model');
 
 module.exports = {
   User,
@@ -34,5 +35,6 @@ module.exports = {
   Bills_services,
   Contracts,
   Renter,
-  UserLikePost
+  UserLikePost,
+  ContractService
 };

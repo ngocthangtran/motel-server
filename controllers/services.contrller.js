@@ -3,7 +3,7 @@ const { Services, FeeBaseOn, User, Building } = require('../db');
 const createService = async (req, res) => {
     const {
         name, price, icon, description,
-        feeBaseOnsId, unit, startValue
+        feeBaseOnsId, unit
     } = req.body;
 
     if (!name || !price || !unit) return res.status(400).send({ status: 400, message: "name, price, unit is required" })
@@ -12,8 +12,7 @@ const createService = async (req, res) => {
             userId: req.user.userId,
             name, price, icon,
             unit,
-            description, fee_base_ons_id: feeBaseOnsId,
-            startValue
+            description, fee_base_ons_id: feeBaseOnsId
         }
         )
         res.send(service);
@@ -43,7 +42,6 @@ const getServiceForUser = async (req, res) => {
     const { userId } = req.user;
     try {
         const services = await Services.findAll({
-
             where: {
                 userId
             }

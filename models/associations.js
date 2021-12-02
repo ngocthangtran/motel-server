@@ -15,7 +15,8 @@ const setAssociations = ({
   Bill,
   Bills_services,
   Renter,
-  UserLikePost
+  UserLikePost,
+  ContractService
 }) => {
   // Room - RoomType
   Room.belongsTo(RoomType, { foreignKey: 'roomTypeId', as: 'roomType' });
@@ -110,15 +111,23 @@ const setAssociations = ({
   })
 
   // Services - contracts
-  Contracts.belongsToMany(Services, {
-    through: 'contracts_services',
+  Contracts.hasMany(ContractService, {
+    // through: 'contracts_services',
     foreignKey: "contractId",
     as: 'contractServices'
   })
-  Services.belongsToMany(Contracts, {
-    through: "contracts_services",
+  ContractService.belongsTo(ContractService, {
+    foreignKey: 'contractId'
+  })
+  Services.hasMany(ContractService, {
+    // through: "contracts_services",
     foreignKey: 'serviceId'
   });
+
+  ContractService.belongsTo(Services, {
+    foreignKey: 'serviceId'
+  })
+
 
   // Contract - bill
   Contracts.hasMany(Bill, {

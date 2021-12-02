@@ -419,11 +419,14 @@ const findPostV2 = async (req, res) => {
         postType ? { postType } : undefined,
         roomTypeId ? { roomTypeId } : undefined,
         priceStart ? sequelize.literal(`price BETWEEN ${priceStart} and ${priceEnd}`) : undefined,
-        areaStart ? sequelize.literal(`area BETWEEN ${areaStart} and ${areaEnd}`) : undefined
+        areaStart ? sequelize.literal(`posts.area BETWEEN ${areaStart} and ${areaEnd}`) : undefined
       ]
     },
-    order: sort ? sort === 'SORT_UP' ? [['price', 'ASC']] : [['price', 'DESC']] : [['createdAt', 'DESC']]
+    order: sort ? sort === 'SORT_UP' ? [['price', 'ASC']] : [['price', 'DESC']] : [['createdAt', 'DESC']],
+    // offset: page ? page * 10 - 10 : 0,
+    // limit: 10,
   })
+  console.log(page)
   const dataConvert = data.map(element => {
     const linkImage = {
       url: `${process.env.BASE_URL}/assets/${element.dataValues.postImages[0].name}_full.jpg`,

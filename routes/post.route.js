@@ -18,6 +18,11 @@ const upload = multer({
   limits: { fieldSize: 25 * 1024 * 1024 },
 });
 
+router.use((req, res, next) => {
+  
+  next();
+})
+
 router.post('/',
   [
     auth,
