@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 const { Contracts, User, Room, Building, Province, Ward, District, Services,
-    FeeBaseOn, Bills_services, sequelize
+    FeeBaseOn, Bills_services, sequelize, ContractService
 } = require('../db');
 
 const convertDate = (date) => {
@@ -96,13 +96,16 @@ const serviceOfRoom = async (req, res) => {
                     attributes: ['name']
                 },
                 {
-                    model: Services,
+                    model: ContractService,
                     as: "contractServices",
                     include: {
-                        model: FeeBaseOn,
-                        as: "createFeeBasseOn"
-                    },
-                    attributes: ["name", "serviceId", "price", "unit", "startValue"]
+                        model: Services,
+                        include: {
+                            model: FeeBaseOn,
+                            as: "createFeeBasseOn"
+                        },
+                        attributes: ["name", "serviceId", "price", "unit"]
+                    }
                 },
             ],
             where: {
