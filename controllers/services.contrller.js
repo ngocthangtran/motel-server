@@ -6,7 +6,7 @@ const createService = async (req, res) => {
         feeBaseOnsId, unit
     } = req.body;
 
-    if (!name || !price || !unit) return res.status(400).send({ status: 400, message: "name, price, unit is required" })
+    if (!name || !price) return res.status(400).send({ status: 400, message: "name, price, unit is required" })
     try {
         const service = await Services.create({
             userId: req.user.userId,

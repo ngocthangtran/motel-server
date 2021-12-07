@@ -1,3 +1,4 @@
+const e = require('express');
 const { Contracts, User, Room, Services, Renter, sequelize, ContractService } = require('../db');
 
 const convertDate = (date) => {
@@ -118,8 +119,11 @@ const getAContract = async (req, res) => {
         const contract = await Contracts.findAll({
             include: [
                 {
-                    model: Services,
-                    as: 'contractServices'
+                    model: ContractService,
+                    as: 'contractServices',
+                    include: {
+                        model: Services
+                    }
                 }, {
                     model: Renter,
                     as: "contractRenter"
@@ -146,13 +150,14 @@ const getAContract = async (req, res) => {
             contractRenter
         } = contract[0].dataValues;
         const listService = contractServices.map(el => {
-            const { serviceId, name, price, unit, startValue } = el;
+            const { serviceId, startValue } = el;
+            const { name, price, unit } = el.dataValues.Service
             return {
                 serviceId, name, price, unit, startValue
             }
         })
         const listRenter = contractRenter.map(el => {
-            const { renterId, name, phone } = el
+            const { renterId, name, phone } = el.dataValues
             return {
                 renterId, name, phone
             }
@@ -209,7 +214,32 @@ const repairContracts = async (req, res) => {
             }
         })
         const contract = await Contracts.findByPk(contractId)
-        await contract.addContractServices(serviceIds);
+        // find service exits on contract
+        const serviceInContract = await ContractService.findAll({
+            attributes: ['serviceId'],
+            where: {
+                contractId
+            }
+        })
+
+        serviceIds.forEach((el, index) => {
+            serviceInContract.forEach(element => {
+                if (el.serviceId === element.serviceId) {
+                    serviceIds.splice(index, 1)
+                }
+
+            })
+
+        })
+
+        const contractService = serviceIds.map(el => {
+            el.contractId = contractId
+            return el;
+        })
+
+        await ContractService.bulkCreate(
+            contractService
+        )
         await contract.addContractRenter(renterIds)
         res.send({
             status: 200,

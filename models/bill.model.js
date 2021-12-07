@@ -21,6 +21,10 @@ module.exports = sequelize => {
         type: DataTypes.UUID,
         allowNull: false,
       },
+      sumPrice: {
+        type: DataTypes.DECIMAL(12, 2),
+        allowNull: false
+      }
     },
     {
       tableName: 'bill',

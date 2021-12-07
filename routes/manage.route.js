@@ -1,6 +1,6 @@
 const { application } = require('express');
 const express = require('express');
-const { getContractTakeEffect, singleClosing, serviceOfRoom } = require('../controllers/manage.controller');
+const { getContractTakeEffect, singleClosing, serviceOfRoom, createBuild, billservice } = require('../controllers/manage.controller');
 const auth = require('../middleware/auth');
 const { validateContractId } = require('../middleware/validate/contracts');
 const { validateRoomId } = require('../middleware/validate/room');
@@ -32,6 +32,25 @@ router.post('/singleclosing',
     ],
     (req, res) => {
         singleClosing(req, res);
+    }
+)
+
+router.get('/billservice',
+    [
+        auth,
+        validateRoomId
+    ], (req, res) => {
+        billservice(req, res)
+    }
+
+)
+
+router.post('/create_build',
+    [
+        auth
+    ],
+    (req, res) => {
+        createBill()
     }
 )
 

@@ -18,6 +18,10 @@ module.exports = sequelize => {
       quantily: {
         type: DataTypes.INTEGER,
       },
+      price: {
+        type: DataTypes.DECIMAL(12, 2),
+        allowNull: false
+      },
       date: {
         type: DataTypes.DATEONLY,
       },
