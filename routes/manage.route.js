@@ -1,6 +1,6 @@
 const { application } = require('express');
 const express = require('express');
-const { getContractTakeEffect, singleClosing, serviceOfRoom, createBuild, billservice } = require('../controllers/manage.controller');
+const { getContractTakeEffect, singleClosing, serviceOfRoom, createBuild, billservice, createBill } = require('../controllers/manage.controller');
 const auth = require('../middleware/auth');
 const { validateContractId } = require('../middleware/validate/contracts');
 const { validateRoomId } = require('../middleware/validate/room');
@@ -45,12 +45,12 @@ router.get('/billservice',
 
 )
 
-router.post('/create_build',
+router.post('/createbuild',
     [
         auth
     ],
     (req, res) => {
-        createBill()
+        createBill(req, res);
     }
 )
 

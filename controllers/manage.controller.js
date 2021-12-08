@@ -382,18 +382,19 @@ const billservice = async (req, res) => {
                     return el.serviceId === serviceId
                 })
                 if (a === -1) {
-                    return service.push({ name, serviceId, price, unit, lastValue: startValue, currentValue: null })
+                    return service.push({ name, serviceId, price, unit, lastValue: startValue, currentValue: null, intoMoney: null })
                 }
-                return service.push({ name, serviceId, price, unit, lastValue: dataBill[0][a].lastValue, currentValue: dataBill[0][a].currentValue })
+                return service.push({ serviceId, billServiceId: dataBill[0][a].billServiceId, name, price, unit, lastValue: dataBill[0][a].lastValue, currentValue: dataBill[0][a].currentValue, intoMoney: dataBill[0][a].price })
 
             })
 
             return service
         }
-        // res.send(bill_service)
+
         res.send({
             rent,
             diffDays,
+            contract: contract.contractId,
             service: convert(service, bill_service)
         })
 
@@ -403,8 +404,55 @@ const billservice = async (req, res) => {
     }
 }
 
-const createBill = (req, res) => {
+const createBill = async (req, res) => {
+    const {
+        date, contractId, service, rent
+    } = req.body;
 
+    var serviceNotCreate = [];
+    const listBillServiceId = [];
+    var sumPrice = rent;
+
+    service.forEach(el => {
+        if (!el.billServiceId) {
+            sumPrice += parseInt(el.price);
+            //check the exitstence of bill service
+            serviceNotCreate.push(el);
+        } else {
+            sumPrice += parseInt(el.intoMoney);
+            listBillServiceId.push(el.billServiceId)
+        }
+    })
+    serviceNotCreate = serviceNotCreate.map(el => {
+        el.contractId = contractId;
+        el.date = date
+        return el;
+    })
+
+    if (serviceNotCreate.length !== 0) {
+        try {
+            const billService = await Bills_services.bulkCreate(serviceNotCreate);
+            billService.forEach(el => {
+                listBillServiceId.push(el.billServiceId)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    try {
+        const bill = await Bill.create({
+            contractId,
+            date,
+            sumPrice
+        })
+        await bill.addBill(listBillServiceId);
+        res.send(bill)
+    } catch (error) {
+        res.status(500).send({
+            status: 500,
+            message: error
+        })
+    }
 }
 
 module.exports = {

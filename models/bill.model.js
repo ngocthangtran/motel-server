@@ -13,7 +13,7 @@ module.exports = sequelize => {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      month: {
+      date: {
         type: DataTypes.DATEONLY,
         allowNull: false,
       },

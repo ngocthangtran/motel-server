@@ -319,3 +319,49 @@
             }
         ]
     }
+
+    * get info create bill
+    auth: true
+    GET: localhost:7777/manage/billservice?roomId=3d02cbdd-15db-4a42-9f72-5d88012f1afb&month=2021-12
+
+    * create build
+    auth: true
+    POST: localhost:7777/manage/createbuild
+    body get on get info create bill
+    body 
+    {
+        "date": "2021-12-07",
+        "contractId": "8571ad86-400e-4497-be4c-702787e300b1",
+        "rent": 32258,
+        "service": [
+            {
+                "name": "Wifi",
+                "serviceId": "38aba4de-0d7f-45ec-a944-d825cef66132",
+                "price": "50000.00",
+                "unit": "Tháng",
+                "lastValue": null,
+                "currentValue": null,
+                "intoMoney": null
+            },
+            {
+                "serviceId": "7edc3a02-a4b6-4c2a-aac6-f1d06bcd35c9",
+                "billServiceId": "2434b46c-493e-467a-a5ac-62dcad98e011",
+                "name": "Nước",
+                "price": "3000.00",
+                "unit": "m3",
+                "lastValue": 1010,
+                "currentValue": 1011,
+                "intoMoney": "3000.00"
+            },
+            {
+                "serviceId": "8e1354b2-df6c-470b-b3c6-31f85544f3b5",
+                "billServiceId": "66f74689-c459-4fe7-a0f0-0e0fa2e4543c",
+                "name": "Điện",
+                "price": "3000.00",
+                "unit": "Kwh",
+                "lastValue": 1010,
+                "currentValue": 1012,
+                "intoMoney": "6000.00"
+            }
+        ]
+    }
