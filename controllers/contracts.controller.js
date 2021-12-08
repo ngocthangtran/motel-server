@@ -22,32 +22,52 @@ const createContracts = async (req, res) => {
         roomId, startAt, endAt, paymentCycle, price, deposit,
         serviceIds, renterIds
     } = req.body;
-
+    let checkRoom
     try {
-        const contract = await Contracts.create({
-            userId,
-            roomId,
-            startAt,
-            endAt,
-            paymentCycle,
-            price,
-            deposit
+        checkRoom = await Contracts.findOne({
+            where: {
+                roomId,
+                status: false,
+                userId
+            }
         })
-        const contractService = serviceIds.map(el => {
-            const { contractId } = contract.dataValues;
-            el.contractId = contractId
-            return el;
-        })
-
-        await ContractService.bulkCreate(
-            contractService
-        )
-
-        await contract.addContractRenter(renterIds)
-        res.send(contract)
     } catch (error) {
-        console.log(error)
-        res.status(500).send(error)
+        res.status(500).status({
+            status: 500,
+            message: "an error occurred in checkRoomService"
+        })
+    }
+    if (!checkRoom) {
+        try {
+            const contract = await Contracts.create({
+                userId,
+                roomId,
+                startAt,
+                endAt,
+                paymentCycle,
+                price,
+                deposit
+            })
+            const contractService = serviceIds.map(el => {
+                const { contractId } = contract.dataValues;
+                el.contractId = contractId
+                return el;
+            })
+
+            await ContractService.bulkCreate(
+                contractService
+            )
+
+            await contract.addContractRenter(renterIds)
+            return res.send(contract)
+        } catch (error) {
+            console.log(error)
+            res.status(500).send(error)
+        }
+    } else {
+        return res.status(406).send({
+            message: "The room has a contract"
+        })
     }
 }
 
