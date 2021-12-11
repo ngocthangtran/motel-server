@@ -98,7 +98,8 @@ const setAssociations = ({
 
   Building.belongsToMany(Services, {
     through: "services_building",
-    foreignKey: "buildingId"
+    foreignKey: "buildingId",
+    as:"buildingService"
   });
 
   // Services - fee base on

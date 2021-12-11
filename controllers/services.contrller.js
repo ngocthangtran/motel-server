@@ -55,15 +55,19 @@ const getServiceForUser = async (req, res) => {
 const getServiceForBuilding = async (req, res) => {
     const { buildingId } = req.params;
     try {
-        const service = await Building.findAll({
-            include: Services,
+        const service = await Building.findOne({
+            include: {
+                model: Services,
+                as: 'buildingService'
+            },
             where: {
                 buildingId
-            },
-            limit: 1
+            }
         })
-        res.send(service[0].dataValues.Services)
+        res.send(service.buildingService)
+        console.log(service)
     } catch (error) {
+        console.log(error)
         res.status(500).send(error)
     }
 }

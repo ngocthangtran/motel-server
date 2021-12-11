@@ -409,50 +409,76 @@ const createBill = async (req, res) => {
         date, contractId, service, rent
     } = req.body;
 
-    var serviceNotCreate = [];
-    const listBillServiceId = [];
-    var sumPrice = rent;
+    let checkBillExistsMonth;
 
-    service.forEach(el => {
-        if (!el.billServiceId) {
-            sumPrice += parseInt(el.price);
-            //check the exitstence of bill service
-            serviceNotCreate.push(el);
-        } else {
-            sumPrice += parseInt(el.intoMoney);
-            listBillServiceId.push(el.billServiceId)
-        }
-    })
-    serviceNotCreate = serviceNotCreate.map(el => {
-        el.contractId = contractId;
-        el.date = date
-        return el;
-    })
-
-    if (serviceNotCreate.length !== 0) {
-        try {
-            const billService = await Bills_services.bulkCreate(serviceNotCreate);
-            billService.forEach(el => {
-                listBillServiceId.push(el.billServiceId)
-            })
-        } catch (error) {
-            console.log(error)
-        }
-    }
     try {
-        const bill = await Bill.create({
-            contractId,
-            date,
-            sumPrice
+        const newDate = new Date(date);
+        checkBillExistsMonth = await Bill.findOne({
+            where: {
+                [Op.and]: [
+                    sequelize.where(sequelize.fn("MONTH", sequelize.col('date')), newDate.getMonth() + 1),
+                    sequelize.where(sequelize.fn("YEAR", sequelize.col('date')), newDate.getFullYear()),
+                    { contractId: contractId },
+                ],
+            }
         })
-        await bill.addBill(listBillServiceId);
-        res.send(bill)
     } catch (error) {
         res.status(500).send({
-            status: 500,
-            message: error
+            message: "Error on check bill exits month"
         })
     }
+    if (!checkBillExistsMonth) {
+        var serviceNotCreate = [];
+        const listBillServiceId = [];
+        var sumPrice = rent;
+
+        service.forEach(el => {
+            if (!el.billServiceId) {
+                sumPrice += parseInt(el.price);
+                //check the exitstence of bill service
+                serviceNotCreate.push(el);
+            } else {
+                sumPrice += parseInt(el.intoMoney);
+                listBillServiceId.push(el.billServiceId)
+            }
+        })
+        serviceNotCreate = serviceNotCreate.map(el => {
+            el.contractId = contractId;
+            el.date = date
+            return el;
+        })
+
+        if (serviceNotCreate.length !== 0) {
+            try {
+                const billService = await Bills_services.bulkCreate(serviceNotCreate);
+                billService.forEach(el => {
+                    listBillServiceId.push(el.billServiceId)
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        try {
+            const bill = await Bill.create({
+                contractId,
+                date,
+                sumPrice
+            })
+            await bill.addBill(listBillServiceId);
+            res.send(bill)
+        } catch (error) {
+            res.status(500).send({
+                status: 500,
+                message: error
+            })
+        }
+    } else {
+        res.status(406).send({
+            status: 406,
+            message: "Bill on the month already exits"
+        })
+    }
+
 }
 
 module.exports = {

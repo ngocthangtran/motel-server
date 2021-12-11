@@ -6,7 +6,8 @@ const createBuilding = async (req, res) => {
         address,
         openTime,
         closeTime,
-        wardId
+        wardId,
+        serviceIds
     } = req.body;
 
     const building = await Building.create({
@@ -17,6 +18,9 @@ const createBuilding = async (req, res) => {
         closeTime,
         wardId
     })
+    if (serviceIds.length !== 0) {
+        await building.addBuildingService(serviceIds)
+    }
     res.status(200).send({ building })
 }
 

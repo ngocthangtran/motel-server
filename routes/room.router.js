@@ -1,11 +1,12 @@
 const express = require('express');
 const auth = require('../middleware/auth');
 const multer = require('multer');
-const { createRoom } = require('../controllers/room.controller');
+const { createRoom, deleteRoom } = require('../controllers/room.controller');
 const imageResize = require('../middleware/imageResize');
 const { validateBuildId } = require('../middleware/validate/building');
 const { validateRoomTypeId } = require('../middleware/validate/roomType');
 const { validateUtilityIds } = require('../middleware/validate/utility');
+const { validateRoomId } = require('../middleware/validate/room');
 const router = express.Router();
 
 const MAX_IMAGE_COUNT = 6;
@@ -27,6 +28,23 @@ router.post(
     ],
     (req, res) => {
         createRoom(req, res)
+    }
+)
+
+router.get('/',
+    [auth],
+    (req, res) => {
+        
+    }
+)
+
+router.delete('/delete',
+    [
+        auth,
+        validateRoomId
+    ],
+    (req, res) => {
+        deleteRoom(req, res)
     }
 )
 

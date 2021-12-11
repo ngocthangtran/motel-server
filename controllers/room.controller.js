@@ -28,6 +28,15 @@ const createRoom = async (req, res) => {
     }
 }
 
+const getAllRoom = (req, res) => {
+    const { userId } = req.user;
+    console.log(userId)
+}
+
+const deleteRoom = (req, res) => {
+
+}
+
 module.exports = {
-    createRoom
+    createRoom, deleteRoom
 }

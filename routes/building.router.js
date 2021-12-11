@@ -56,7 +56,7 @@ router.post('/addservice',
     }
 )
 
-router.post('/removeservice',
+router.delete('/removeservice',
     [auth],
     (req, res) => {
         removeService(req, res);

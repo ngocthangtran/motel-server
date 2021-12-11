@@ -9,6 +9,10 @@
         "wardId": "00004",
         "openTime": "06:00", tuy chon
         "closeTime": "07:00",
+        "serviceIds": [
+            "8e1354b2-df6c-470b-b3c6-31f85544f3b5",
+            "7edc3a02-a4b6-4c2a-aac6-f1d06bcd35c9"
+        ]
     }
 *get building
     auth:true
@@ -19,6 +23,22 @@
     * DELETE: localhost:7777/building/delete
     body:{
         "buildingId":"ecf19d58-1cdd-41d7-8ce3-104c1c06f0e9"
+    }
+
+*Add service building
+    auth: true
+    POST: localhost:7777/building/addservice
+    body:{
+        "serviceId": "38aba4de-0d7f-45ec-a944-d825cef66132",
+        "buildingId": "4679c6de-ca06-4783-b938-1a230b2113e1"
+    }
+
+*delete service on building
+    auth: true
+    * DELETE: localhost:7777/building/removeservice
+    body:{
+        "serviceId": "8f5711ec-fd4f-4bcc-bfe2-924e37bd0880",
+        "buildingId": "d62e71cb-d956-489d-9b93-656b6fef9ffd"
     }
 
 *repaid building
