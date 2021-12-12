@@ -18,7 +18,7 @@ const createBuilding = async (req, res) => {
         closeTime,
         wardId
     })
-    if (serviceIds.length !== 0) {
+    if (serviceIds && serviceIds.length !== 0) {
         await building.addBuildingService(serviceIds)
     }
     res.status(200).send({ building })
