@@ -10,6 +10,16 @@ const createBuilding = async (req, res) => {
         serviceIds
     } = req.body;
 
+    const checkNameBuilding = await Building.findOne({
+        where: {
+            name, userId: req.user.userId
+        }
+    })
+    if (checkNameBuilding) {
+        return res.status(400).send({
+            message: "the building already exists"
+        })
+    }
     const building = await Building.create({
         userId: req.user.userId,
         name,

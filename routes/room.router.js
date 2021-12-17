@@ -1,7 +1,7 @@
 const express = require('express');
 const auth = require('../middleware/auth');
 const multer = require('multer');
-const { createRoom, deleteRoom } = require('../controllers/room.controller');
+const { createRoom, deleteRoom, getAllRoom } = require('../controllers/room.controller');
 const imageResize = require('../middleware/imageResize');
 const { validateBuildId } = require('../middleware/validate/building');
 const { validateRoomTypeId } = require('../middleware/validate/roomType');
@@ -32,9 +32,12 @@ router.post(
 )
 
 router.get('/',
-    [auth],
+    [
+        auth,
+        validateBuildId
+    ],
     (req, res) => {
-        
+        getAllRoom(req, res);
     }
 )
 

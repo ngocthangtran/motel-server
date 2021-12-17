@@ -8,7 +8,7 @@ const validateRoomId = async (req, res, next) => {
     if (!room) {
         return res
             .status(400)
-            .send({ error: 'cannot find room with id ' + roomId });
+            .send({ error: "cannot find room with id " + roomId });
     }
     req.roomId = roomId;
     next();
