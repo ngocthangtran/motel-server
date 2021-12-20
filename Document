@@ -344,9 +344,9 @@
     auth: true
     GET: localhost:7777/manage/billservice?roomId=3d02cbdd-15db-4a42-9f72-5d88012f1afb&month=2021-12
 
-    * create build
+    * create bill
     auth: true
-    POST: localhost:7777/manage/createbuild
+    POST: localhost:7777/manage/createbill
     body get on get info create bill
     body 
     {

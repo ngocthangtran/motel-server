@@ -45,7 +45,7 @@ router.get('/billservice',
 
 )
 
-router.post('/createbuild',
+router.post('/createbill',
     [
         auth
     ],

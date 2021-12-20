@@ -50,4 +50,7 @@ const loginWithGoogle = async (res, idToken) => {
   }
 };
 
-module.exports = { login };
+
+module.exports = {
+  login
+};

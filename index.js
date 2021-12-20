@@ -11,6 +11,7 @@ const service = require('./routes/services.router');
 const contracts = require('./routes/contracts.route');
 const renter = require('./routes/renter.router');
 const manage = require('./routes/manage.route');
+const userLogin = require('./routes/userLogin.routes');
 
 const port = process.env.PORT || 7777;
 const app = express();
@@ -28,6 +29,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/user', userLogin)
 app.use('/auth', authRouter);
 app.use('/posts', postRouter);
 app.use('/ui', uiRouter);
