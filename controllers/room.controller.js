@@ -9,7 +9,6 @@ const createRoom = async (req, res) => {
         name,
         deposit,
         roomTypeId,
-        utilityIds
     } = req.body;
 
     try {

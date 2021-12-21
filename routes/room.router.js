@@ -23,7 +23,6 @@ router.post(
         upload.array('images', MAX_IMAGE_COUNT),
         imageResize,
         validateBuildId,
-        validateUtilityIds,
         validateRoomTypeId
     ],
     (req, res) => {
