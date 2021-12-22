@@ -20,9 +20,9 @@ const createRoom = async (req, res) => {
             roomTypeId,
         }
         )
-        await room.addUtilities(utilityIds)
         res.send(room)
     } catch (error) {
+        console.log(error)
         res.status(500).send(error)
     }
 }
@@ -32,7 +32,7 @@ const getAllRoom = async (req, res) => {
     const { buildingId } = req.query;
     try {
         const room = await Room.findAll({
-            attributes: ['roomId'],
+            attributes: ['roomId', "name"],
             include: [
                 {
                     model: Building,
@@ -58,7 +58,7 @@ const getAllRoom = async (req, res) => {
             ]
         });
         const data = room.map(el => {
-            const { roomId, Contracts: contract } = el;
+            const { roomId, Contracts: contract, name } = el;
             let price, renterCount;
 
             if (contract && contract.length > 0) {
@@ -73,6 +73,7 @@ const getAllRoom = async (req, res) => {
             }
             return {
                 roomId,
+                name,
                 contractId: contract.contractId,
                 contractCount: contract.length,
                 renterCount: renterCount ? renterCount : 0,
