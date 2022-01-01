@@ -306,7 +306,7 @@
 ***Manager
     *get all room on all billding
     auth: true,
-    GET: localhost:7777/manage/contract/effective
+    GET: localhost:7777/manage/contract/effective?month=8&year=2021
 
     * get service of Room
     auth: true
