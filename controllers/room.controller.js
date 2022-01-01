@@ -59,6 +59,7 @@ const getAllRoom = async (req, res) => {
         });
         const data = room.map(el => {
             const { roomId, Contracts: contract, name } = el;
+
             let price, renterCount;
 
             if (contract && contract.length > 0) {
@@ -131,6 +132,10 @@ const deleteRoom = async (req, res) => {
     }
 }
 
+const getARoom = (req, res) => {
+
+}
+
 module.exports = {
-    createRoom, deleteRoom, getAllRoom
+    createRoom, deleteRoom, getAllRoom, getARoom
 }

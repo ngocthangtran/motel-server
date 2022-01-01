@@ -1,3 +1,4 @@
+const e = require('express');
 const { Op } = require('sequelize');
 const { Contracts, User, Room, Building, Province, Ward, District, Services,
     FeeBaseOn, Bills_services, sequelize, ContractService, Bill
@@ -19,8 +20,11 @@ const comparisonDate = (date) => {
 
 const getContractTakeEffect = async (req, res) => {
     const { userId } = req.user;
+    const { month, year } = req.query;
+
     try {
-        const contract = await Contracts.findAll({
+        // lay danh sach hop dong da chot dich vu
+        const contractServieExitMonth = await Contracts.findAll({
             include: [
                 {
                     model: User,
@@ -40,16 +44,55 @@ const getContractTakeEffect = async (req, res) => {
                             }
                         }
                     }
+                }, {
+                    attributes: [],
+                    model: Bills_services,
+                    where: {
+                        [Op.and]: [
+                            sequelize.where(sequelize.fn("MONTH", sequelize.col('date')), month),
+                            sequelize.where(sequelize.fn("YEAR", sequelize.col('date')), year)
+                        ],
+                    }
                 }
             ],
         })
 
-        const data = contract.reduce((beforeValue, afterValue, index) => {
+        const contract = await Contracts.findAll({
+            include: [
+                {
+                    model: User,
+                    attributes: ['userId'],
+                    where: {
+                        userId
+                    }
+                },
+                {
+                    model: Room,
+                    include: {
+                        model: Building,
+                        include: {
+                            model: Ward,
+                            include: {
+                                model: District,
+                                include: Province
+                            }
+                        }
+                    }
+                }, {
+                    model: Bills_services,
+                }
+            ],
+        })
+
+        // lay data da co trong thang
+        const allRoomIdExit = [];
+        const exitmonth = contractServieExitMonth.reduce((beforeValue, afterValue) => {
             var {
                 Room: room,
             } = afterValue.dataValues
             const { Building, name: nameRoom, roomId } = room;
             const { buildingId, name, address } = Building;
+            allRoomIdExit.push(roomId);
             if (!beforeValue.find(value => value.buildingId === buildingId)) {
                 beforeValue.push({
                     buildingId: buildingId,
@@ -67,7 +110,6 @@ const getContractTakeEffect = async (req, res) => {
                 })
             } else {
                 const indexBulding = beforeValue.findIndex(value => value.buildingId === buildingId)
-
                 beforeValue[indexBulding].room.push({
                     roomId,
                     name: nameRoom,
@@ -79,7 +121,53 @@ const getContractTakeEffect = async (req, res) => {
             }
             return beforeValue
         }, [])
-        res.send(data)
+        // lay tat ca cac data
+        var data2 = contract.reduce((beforeValue, afterValue) => {
+            var {
+                Room: room,
+            } = afterValue.dataValues
+            const { Building, name: nameRoom, roomId } = room;
+            const { buildingId, name, address } = Building;
+            allRoomIdExit.forEach(el => {
+                if (el !== roomId) {
+                    if (!beforeValue.find(value => value.buildingId === buildingId)) {
+                        beforeValue.push({
+                            buildingId: buildingId,
+                            name: name,
+                            room: [
+                                {
+                                    roomId,
+                                    name: nameRoom,
+                                    address,
+                                    ward: Building.Ward.name,
+                                    District: Building.Ward.District.name,
+                                    Province: Building.Ward.District.Province.name,
+                                }
+                            ]
+                        })
+                    } else {
+                        const indexBulding = beforeValue.findIndex(value => value.buildingId === buildingId)
+
+                        beforeValue[indexBulding].room.push({
+                            roomId,
+                            name: nameRoom,
+                            address,
+                            ward: Building.Ward.name,
+                            District: Building.Ward.District.name,
+                            Province: Building.Ward.District.Province.name,
+                        })
+                    }
+                }
+            })
+            return beforeValue
+
+        }, [])
+
+        res.send({
+            "exitmonth": exitmonth,
+            "notExitMonth": data2
+        })
+        // res.send(contract)
     } catch (error) {
         console.log(error)
         res.status(500).send(error)

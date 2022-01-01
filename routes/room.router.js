@@ -1,6 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth');
-const { createRoom, deleteRoom, getAllRoom } = require('../controllers/room.controller');
+const { createRoom, deleteRoom, getAllRoom, getARoom } = require('../controllers/room.controller');
 const imageResize = require('../middleware/imageResize');
 const { validateBuildId } = require('../middleware/validate/building');
 const { validateRoomTypeId } = require('../middleware/validate/roomType');
@@ -26,6 +26,14 @@ router.get('/',
     ],
     (req, res) => {
         getAllRoom(req, res);
+    }
+)
+
+router.get('/:roomId',
+    [
+        auth
+    ], (req, res) => {
+        getARoom(req, res);s
     }
 )
 
