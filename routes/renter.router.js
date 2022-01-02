@@ -36,7 +36,7 @@ router.delete('/delete/:renterId',
         validateRenter
     ],
     (req, res) => {
-        deleteRenters(req, res)
+        deleteRenter(req, res)
     }
 )
 
