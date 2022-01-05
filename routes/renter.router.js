@@ -1,5 +1,5 @@
 const express = require('express');
-const { createRenter, getRenter, repairRenter, deleteRenter } = require('../controllers/renter.controller');
+const { createRenter, getRenter, repairRenter, deleteRenter, getRenterNotContract } = require('../controllers/renter.controller');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const { validateRenter } = require('../middleware/validate/renter');
@@ -19,6 +19,12 @@ router.get('/',
         getRenter(req, res);
     }
 )
+
+router.get('/nocontracts', [
+    auth
+], (req, res) => {
+    getRenterNotContract(req, res);
+})
 
 router.post('/repair',
     [
@@ -40,4 +46,6 @@ router.delete('/delete/:renterId',
     }
 )
 
+
+router.get('/de')
 module.exports = router;

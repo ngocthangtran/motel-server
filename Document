@@ -226,6 +226,10 @@
     auth: true
     GET: localhost:7777/renter/
 
+    *get renter for user not contract yet
+    auth: true
+    GET: localhost:7777/renter/nocontracts
+
     *Repair renter
     auth: true,
     POST: localhost:7777/renter/repair
