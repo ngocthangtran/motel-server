@@ -91,7 +91,7 @@ const deleteBulding = async (req, res) => {
                 userId
             }
         })
-        
+
         if (building.Room.length === 0) {
             try {
                 const result = await Building.destroy({
@@ -106,13 +106,13 @@ const deleteBulding = async (req, res) => {
             } catch (error) {
                 res.status(500).send(error)
             }
-        } else{
+        } else {
             return res.status(400).send({
                 message: `Tòa nhà tồn tại phòng và có hợp đồng không thể xóa`
             })
         }
     } catch (error) {
-
+        res.status(500).send({ message: "error" })
     }
 }
 

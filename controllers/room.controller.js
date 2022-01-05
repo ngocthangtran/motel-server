@@ -10,8 +10,23 @@ const createRoom = async (req, res) => {
         deposit,
         roomTypeId,
     } = req.body;
-
+    let check;
     try {
+        check = Room.findOne({
+            where: {
+                name
+            }
+        })
+    } catch (error) {
+        res.status(500).send(error);
+    }
+    try {
+        if (room) {
+            return res.status(400).send({
+                stauts: 400,
+                message: "Room name already exists"
+            })
+        }
         const room = await Room.create({
             buildingId,
             name,
@@ -20,9 +35,8 @@ const createRoom = async (req, res) => {
             roomTypeId,
         }
         )
-        res.send(room)
+        return res.send(room)
     } catch (error) {
-        console.log(error)
         res.status(500).send(error)
     }
 }
