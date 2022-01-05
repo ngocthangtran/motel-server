@@ -27,9 +27,10 @@ router.get('/',
     }
 )
 
-router.delete('/delete',
+router.delete('/delete/:buildingId',
     [
-        auth
+        auth,
+        validateBuildId
     ],
     (req, res) => {
         deleteBulding(req, res)
