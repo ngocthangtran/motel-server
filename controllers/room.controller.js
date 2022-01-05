@@ -12,7 +12,7 @@ const createRoom = async (req, res) => {
     } = req.body;
     let check;
     try {
-        check = Room.findOne({
+        check = await Room.findOne({
             where: {
                 name
             }
@@ -20,8 +20,9 @@ const createRoom = async (req, res) => {
     } catch (error) {
         res.status(500).send(error);
     }
+
     try {
-        if (room) {
+        if (check !== null) {
             return res.status(400).send({
                 stauts: 400,
                 message: "Room name already exists"
@@ -37,6 +38,7 @@ const createRoom = async (req, res) => {
         )
         return res.send(room)
     } catch (error) {
+        console.log(error)
         res.status(500).send(error)
     }
 }

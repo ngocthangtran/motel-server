@@ -81,18 +81,19 @@ const deleteBulding = async (req, res) => {
     const { buildingId } = req.params;
     // check room
     try {
-        const building = await Building.findAll({
+        const building = await Building.findOne({
             include: [
                 {
                     model: Room
                 }
             ],
             where: {
-                userId
+                userId,
+                buildingId
             }
         })
-
-        if (building.Room.length === 0) {
+        
+        if (building.Rooms.length === 0) {
             try {
                 const result = await Building.destroy({
                     where: {
@@ -112,6 +113,7 @@ const deleteBulding = async (req, res) => {
             })
         }
     } catch (error) {
+        console.log(error)
         res.status(500).send({ message: "error" })
     }
 }
