@@ -1,4 +1,5 @@
-const { Building, Ward, District, Province, Services, sequelize } = require('../db');
+const e = require('cors');
+const { Building, Ward, District, Province, Services, sequelize, Room } = require('../db');
 
 const createBuilding = async (req, res) => {
     const {
@@ -78,20 +79,40 @@ const getBuilding = async (req, res) => {
 const deleteBulding = async (req, res) => {
     const { userId } = req.user;
     const { buildingId } = req.params;
-
+    // check room
     try {
-        const result = await Building.destroy({
+        const building = await Building.findAll({
+            include: [
+                {
+                    model: Room
+                }
+            ],
             where: {
-                userId,
-                buildingId
+                userId
             }
         })
-        console.log(result)
-        res.send({
-            message: `deleted ${result} line`
-        })
+        
+        if (building.Room.length === 0) {
+            try {
+                const result = await Building.destroy({
+                    where: {
+                        userId,
+                        buildingId
+                    }
+                })
+                return res.send({
+                    message: `deleted ${result} line`
+                })
+            } catch (error) {
+                res.status(500).send(error)
+            }
+        } else{
+            return res.status(400).send({
+                message: `Tòa nhà tồn tại phòng và có hợp đồng không thể xóa`
+            })
+        }
     } catch (error) {
-        res.status(500).send(error)
+
     }
 }
 
