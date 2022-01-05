@@ -77,7 +77,7 @@ const getBuilding = async (req, res) => {
 
 const deleteBulding = async (req, res) => {
     const { userId } = req.user;
-    const { buildingId } = req.query;
+    const { buildingId } = req.params;
 
     try {
         const result = await Building.destroy({
