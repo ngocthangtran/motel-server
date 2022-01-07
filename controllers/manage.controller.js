@@ -631,15 +631,21 @@ const getAllBillonMonth = async (req, res) => {
                 ]
             }
         });
-        const convertData = bill.map(el => {
-            const { billId, sumPrice, Contract } = el;
+        const data = {
+            paid: [],
+            unPaid: []
+        }
+        bill.forEach(vl => {
+            const { billId, sumPrice, Contract, status } = vl;
             const roomName = Contract.Room.name, buildingName = Contract.Room.Building.name
-            return {
-                billId, roomName, buildingName, sumPrice
+            if (status === false) {
+                data.unPaid.push({ billId, sumPrice, roomName, buildingName })
+            } else {
+                data.Paid.push({ billId, sumPrice, roomName, buildingName })
             }
         })
 
-        res.send(convertData)
+        res.send(data)
     } catch (error) {
         console.log(error)
     }
@@ -651,15 +657,47 @@ const billDetails = async (req, res) => {
         const bill = await Bill.findOne({
             include: [
                 {
+                    model: Contracts,
+                    include: {
+                        model: Room,
+                        include: Building
+                    }
+
+                },
+                {
                     model: Bills_services,
-                    as: "billService"
-                }
+                    as: "billService",
+                    include: {
+                        model: Services,
+
+                    }
+                },
             ],
             where: {
                 billId
             }
         })
-        res.send(bill)
+        const data = {
+            billId,
+            status: bill.status,
+            nameBuilding: bill.Contract.Room.Building.name,
+            nameRoom: bill.Contract.Room.name,
+            startDay: bill.startDay,
+            endDay: bill.endDay
+        }
+        const services = bill.billService.map(el => {
+            // { name, serviceId, price, unit, lastValue: startValue, currentValue: null, intoMoney: null }
+            const {
+                lastValue, currentValue, quantily, price, Service: service
+            } = el;
+            const { name: nameService, unit } = service
+
+            return {
+                lastValue, currentValue, quantily, price, nameService, unit,
+                intoMoney: lastValue ? (currentValue - lastValue) * parseInt(price) : parseInt(price)
+            }
+        })
+        res.send({ ...data, services })
     } catch (error) {
         console.log(error)
     }

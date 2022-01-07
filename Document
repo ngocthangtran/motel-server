@@ -389,3 +389,10 @@
             }
         ]
     }
+    * get all build on month
+    auth: true
+    GET: localhost:7777/manage/allbill?month=1&year=2022
+
+    * view a detail
+    auth: true
+    GET: localhost:7777/manage/detailsbill/:billId
