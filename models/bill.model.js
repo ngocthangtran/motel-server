@@ -24,6 +24,16 @@ module.exports = sequelize => {
       sumPrice: {
         type: DataTypes.DECIMAL(12, 2),
         allowNull: false
+      },
+      status: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      },
+      startDay: {
+        type: DataTypes.DATEONLY,
+      },
+      endDay: {
+        type: DataTypes.DATEONLY,
       }
     },
     {

@@ -44,8 +44,8 @@ const getContractTakeEffect = async (req, res) => {
                             }
                         }
                     }
-                }, {
-                    attributes: [],
+                },
+                {
                     model: Bills_services,
                     where: {
                         [Op.and]: [
@@ -55,8 +55,10 @@ const getContractTakeEffect = async (req, res) => {
                     }
                 }
             ],
+            where: {
+                status: false
+            }
         })
-
         const contract = await Contracts.findAll({
             include: [
                 {
@@ -78,10 +80,11 @@ const getContractTakeEffect = async (req, res) => {
                             }
                         }
                     }
-                }, {
-                    model: Bills_services,
                 }
             ],
+            where: {
+                status: false
+            }
         })
 
         // lay data da co trong thang
@@ -128,37 +131,65 @@ const getContractTakeEffect = async (req, res) => {
             } = afterValue.dataValues
             const { Building, name: nameRoom, roomId } = room;
             const { buildingId, name, address } = Building;
-            allRoomIdExit.forEach(el => {
-                if (el !== roomId) {
-                    if (!beforeValue.find(value => value.buildingId === buildingId)) {
-                        beforeValue.push({
-                            buildingId: buildingId,
-                            name: name,
-                            room: [
-                                {
-                                    roomId,
-                                    name: nameRoom,
-                                    address,
-                                    ward: Building.Ward.name,
-                                    District: Building.Ward.District.name,
-                                    Province: Building.Ward.District.Province.name,
-                                }
-                            ]
-                        })
-                    } else {
-                        const indexBulding = beforeValue.findIndex(value => value.buildingId === buildingId)
+            if (allRoomIdExit.length !== 0) {
+                allRoomIdExit.forEach(el => {
+                    if (el !== roomId) {
+                        if (!beforeValue.find(value => value.buildingId === buildingId)) {
+                            beforeValue.push({
+                                buildingId: buildingId,
+                                name: name,
+                                room: [
+                                    {
+                                        roomId,
+                                        name: nameRoom,
+                                        address,
+                                        ward: Building.Ward.name,
+                                        District: Building.Ward.District.name,
+                                        Province: Building.Ward.District.Province.name,
+                                    }
+                                ]
+                            })
+                        } else {
+                            const indexBulding = beforeValue.findIndex(value => value.buildingId === buildingId)
 
-                        beforeValue[indexBulding].room.push({
+                            beforeValue[indexBulding].room.push({
+                                roomId,
+                                name: nameRoom,
+                                address,
+                                ward: Building.Ward.name,
+                                District: Building.Ward.District.name,
+                                Province: Building.Ward.District.Province.name,
+                            })
+                        }
+                    }
+                })
+            }
+            if (!beforeValue.find(value => value.buildingId === buildingId)) {
+                beforeValue.push({
+                    buildingId: buildingId,
+                    name: name,
+                    room: [
+                        {
                             roomId,
                             name: nameRoom,
                             address,
                             ward: Building.Ward.name,
                             District: Building.Ward.District.name,
                             Province: Building.Ward.District.Province.name,
-                        })
-                    }
-                }
-            })
+                        }
+                    ]
+                })
+            } else {
+                const indexBulding = beforeValue.findIndex(value => value.buildingId === buildingId)
+                beforeValue[indexBulding].room.push({
+                    roomId,
+                    name: nameRoom,
+                    address,
+                    ward: Building.Ward.name,
+                    District: Building.Ward.District.name,
+                    Province: Building.Ward.District.Province.name,
+                })
+            }
             return beforeValue
 
         }, [])
@@ -167,7 +198,6 @@ const getContractTakeEffect = async (req, res) => {
             "exitmonth": exitmonth,
             "notExitMonth": data2
         })
-        // res.send(contract)
     } catch (error) {
         console.log(error)
         res.status(500).send(error)
@@ -198,7 +228,7 @@ const serviceOfRoom = async (req, res) => {
                 },
             ],
             where: {
-                roomId,
+                roomId, status: false
             },
         })
 
@@ -352,7 +382,7 @@ const billservice = async (req, res) => {
         month, roomId, endAt, startAt
     } = req.query
 
-    let contract, billForContract, rent, diffDays;
+    let contract, billForContract, rent, diffDays, startDay, endDay;
 
     try {
         contract = await Contracts.findOne({
@@ -368,10 +398,10 @@ const billservice = async (req, res) => {
         })
     }
     try {
-        billForContract = await Contracts.findOne({
+        billForContract = await Bill.findOne({
             where: {
                 [Op.and]: [
-                    sequelize.literal(`createdAt=(select min(createdAt) from motel.contracts)`),
+                    sequelize.literal(`createdAt=(select min(createdAt) from motel.bill)`),
                     { contractId: contract.contractId }
                 ]
             }
@@ -382,31 +412,32 @@ const billservice = async (req, res) => {
             error
         })
     }
+
     const arrDate = month.split('-')
+
     if (endAt && startAt) {
         const date1 = new Date(startAt);
         const date2 = new Date(endAt);
-
+        startDay = date1; endDay = date2
         const diffTime = Math.abs(date2 - date1)
         diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
         rent = Math.round((parseInt(contract.price) / lastDay) * diffDays)
     }
     else {
-
         const lastDay = new Date(arrDate[0], arrDate[1], 0).getDate()
-        let date1 = new Date(arrDate[0], arrDate[1], 1);
-        if (!billForContract) {
-            date1 = new Date(contract.startAt);
+        let date1 = new Date(contract.startAt);
+        if (billForContract) {
+            date1 = new Date(`${arrDate[0]}-${arrDate[1]}-1`);
         }
         const date2 = new Date(`${arrDate[0]}-${arrDate[1]}-${lastDay}`);
-
+        startDay = `${date1.getFullYear()}-${date1.getMonth() + 1}-${date1.getDate()}`;
+        endDay = `${date2.getFullYear()}-${date2.getMonth() + 1}-${date2.getDate()}`;
         const diffTime = Math.abs(date2 - date1)
         diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-
         rent = Math.round((parseInt(contract.price) / lastDay) * diffDays)
     }
-
+    // tinhs tieenf
     try {
         const service = await Contracts.findOne({
             include: [
@@ -437,7 +468,6 @@ const billservice = async (req, res) => {
          where 
          month(date)=${arrDate[1]} and year(date)=${arrDate[0]} and contractId="${contract.contractId}"`)
 
-
         var maxDate = await Bills_services.findOne({
             attributes: [[sequelize.fn('max', sequelize.col('date')), 'max']],
             where: {
@@ -445,6 +475,7 @@ const billservice = async (req, res) => {
             },
             group: ['serviceId'],
         })
+
         if (bill_service.length === 0 && maxDate) {
             maxDate = maxDate.dataValues.max
             bill_service = await Bills_services.findAll({
@@ -480,9 +511,11 @@ const billservice = async (req, res) => {
         }
 
         res.send({
+            startDay,
+            endDay,
             rent,
             diffDays,
-            contract: contract.contractId,
+            contractId: contract.contractId,
             service: convert(service, bill_service)
         })
 
@@ -494,7 +527,7 @@ const billservice = async (req, res) => {
 
 const createBill = async (req, res) => {
     const {
-        date, contractId, service, rent
+        date, contractId, service, rent, startDay, endDay
     } = req.body;
 
     let checkBillExistsMonth;
@@ -511,7 +544,8 @@ const createBill = async (req, res) => {
             }
         })
     } catch (error) {
-        res.status(500).send({
+        console.log(error)
+        return res.status(500).send({
             message: "Error on check bill exits month"
         })
     }
@@ -550,9 +584,10 @@ const createBill = async (req, res) => {
             const bill = await Bill.create({
                 contractId,
                 date,
-                sumPrice
+                sumPrice, status: false,
+                startDay, endDay
             })
-            await bill.addBill(listBillServiceId);
+            await bill.addBillService(listBillServiceId);
             res.send(bill)
         } catch (error) {
             res.status(500).send({
@@ -569,8 +604,70 @@ const createBill = async (req, res) => {
 
 }
 
+const getAllBillonMonth = async (req, res) => {
+    const { userId } = req.user
+    const { month, year } = req.query;
+
+    try {
+        const bill = await Bill.findAll({
+            include: [
+                {
+                    model: Contracts,
+                    include: [
+                        {
+                            model: Room,
+                            include: Building
+                        }
+                    ],
+                    where: {
+                        userId
+                    }
+                }
+            ],
+            where: {
+                [Op.and]: [
+                    sequelize.where(sequelize.fn("MONTH", sequelize.col('date')), month),
+                    sequelize.where(sequelize.fn("YEAR", sequelize.col('date')), year)
+                ]
+            }
+        });
+        const convertData = bill.map(el => {
+            const { billId, sumPrice, Contract } = el;
+            const roomName = Contract.Room.name, buildingName = Contract.Room.Building.name
+            return {
+                billId, roomName, buildingName, sumPrice
+            }
+        })
+
+        res.send(convertData)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const billDetails = async (req, res) => {
+    const { billId } = req.params;
+    try {
+        const bill = await Bill.findOne({
+            include: [
+                {
+                    model: Bills_services,
+                    as: "billService"
+                }
+            ],
+            where: {
+                billId
+            }
+        })
+        res.send(bill)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 module.exports = {
     getContractTakeEffect, singleClosing,
     serviceOfRoom,
-    createBill, billservice
+    createBill, billservice, getAllBillonMonth,
+    billDetails
 }

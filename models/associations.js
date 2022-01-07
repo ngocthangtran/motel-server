@@ -146,7 +146,7 @@ const setAssociations = ({
   Bill.belongsToMany(Bills_services, {
     through: "bill_bill_service",
     foreignKey: "billId",
-    as: 'bill'
+    as: 'billService'
   })
   // bill_service - services
   Services.hasMany(Bills_services, {
