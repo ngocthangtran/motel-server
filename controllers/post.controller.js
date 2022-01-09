@@ -1,6 +1,7 @@
 const { User, Posts, Ward, Province, PostImage, District, Room, Building, RoomType, Utility, sequelize } = require('../db');
 const { Op } = require('sequelize');
-const { unlink } = require('fs')
+const { unlink } = require('fs');
+const sendMail = require('../utils/sendEmailPost');
 
 const converData = (data, user) => data.map(item => {
   const { postId, postType, title, price, area, description,
@@ -86,6 +87,7 @@ const createPost = async (req, res) => {
     })
     await post.addPostutilities(utilityIds)
     res.send(post)
+    sendMail(req, res);
   } catch (error) {
     console.log(error)
     res.status(500).send(error)
@@ -393,6 +395,8 @@ const findPostV2 = async (req, res) => {
     value, roomTypeId, postType, sort, page, priceStart, priceEnd, areaStart, areaEnd
   } = req.query;
 
+  console.log(areaEnd)
+
   const data = await Posts.findAll({
     include: [
       {
@@ -426,7 +430,6 @@ const findPostV2 = async (req, res) => {
     // offset: page ? page * 10 - 10 : 0,
     // limit: 10,
   })
-  console.log(page)
   const dataConvert = data.map(element => {
     const linkImage = {
       url: `${process.env.BASE_URL}/assets/${element.dataValues.postImages[0].name}_full.jpg`,
@@ -875,28 +878,7 @@ const findLocation = async (req, res) => {
 }
 
 const test = async (req, res) => {
-  const post = await Posts.findAll({
-    attributes: ["postId", "postType", "title", "price", "area", "description", "address", "createdAt", "updatedAt",
-      [sequelize.literal(` 6371 * acos( cos( radians(10.987229) ) * cos( radians( latitude ) ) * 
-         cos( radians( longitude ) - radians(106.716486) ) + sin( radians(10.987229) ) * 
-         sin( radians( latitude ) ) )`), 'test'
-      ]
-    ],
-    // attributes: {
-    //   include: [
-    //     [sequelize.literal(` 6371 * acos( cos( radians(10.987229) ) * cos( radians( latitude ) ) * 
-    //     cos( radians( longitude ) - radians(106.716486) ) + sin( radians(10.987229) ) * 
-    //     sin( radians( latitude ) ) )`), 'sdsa']
-    //   ]
-    // },
-    include: [
-      {
-        model: User,
-        as: 'liked',
-      }
-    ]
-  })
-  res.send(post)
+  console.log(req.user)
 }
 
 module.exports = {

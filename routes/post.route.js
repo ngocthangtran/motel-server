@@ -19,7 +19,7 @@ const upload = multer({
 });
 
 router.use((req, res, next) => {
-  
+
   next();
 })
 
@@ -130,7 +130,7 @@ router.get('/location', [
   findLocation(req, res);
 })
 
-router.get('/test', (req, res) => {
+router.get('/test', [auth], (req, res) => {
   test(req, res);
 })
 
