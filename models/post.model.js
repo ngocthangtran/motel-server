@@ -76,8 +76,12 @@ module.exports = sequelize => {
         max: 180,
       },
     },
-  },{
+    status: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    }
+  }, {
     tableName: 'posts'
-});
+  });
 
 };

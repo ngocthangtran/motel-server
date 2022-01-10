@@ -5,7 +5,7 @@ const account = {
     pass: '12345678@_'
 }
 
-const sendMail = (req, res) => {
+const sendMail = (req, res, postId) => {
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -34,6 +34,21 @@ const sendMail = (req, res) => {
     })
 
     //send add admin
+
+    const mailOtionAdmin = {
+        from: account.user,
+        to: 'ngocthangkt27@gmail.com',
+        subject: `Duyệt bài đăng: ${req.body.title}`,
+        html: `<h3>Một user mới đăng bài trên TroVn</h3>
+        <p>Duyệt bài đăng tại ${process.env.BASE_URL_ADMIN}/post/${postId}</p>`
+    }
+    transporter.sendMail(mailOtionAdmin, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    })
 }
 
 module.exports = sendMail;

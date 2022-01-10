@@ -87,7 +87,7 @@ const createPost = async (req, res) => {
     })
     await post.addPostutilities(utilityIds)
     res.send(post)
-    sendMail(req, res);
+    sendMail(req, res, post.postId);
   } catch (error) {
     console.log(error)
     res.status(500).send(error)
@@ -125,7 +125,8 @@ const getNewPost = async (req, res) => {
       }
     ],
     where: {
-      postType: 'FOR_RENT'
+      postType: 'FOR_RENT',
+      status: true
     },
     order: [['createdAt', 'DESC']],
     offset: 0,
@@ -160,7 +161,8 @@ const getNewPost = async (req, res) => {
       }
     ],
     where: {
-      postType: 'FOR_SHARE'
+      postType: 'FOR_SHARE',
+      status: true
     },
     order: [['createdAt', 'DESC']],
     offset: 0,
@@ -423,7 +425,8 @@ const findPostV2 = async (req, res) => {
         postType ? { postType } : undefined,
         roomTypeId ? { roomTypeId } : undefined,
         priceStart ? sequelize.literal(`price BETWEEN ${priceStart} and ${priceEnd}`) : undefined,
-        areaStart ? sequelize.literal(`posts.area BETWEEN ${areaStart} and ${areaEnd}`) : undefined
+        areaStart ? sequelize.literal(`posts.area BETWEEN ${areaStart} and ${areaEnd}`) : undefined,
+        { status: true }
       ]
     },
     order: sort ? sort === 'SORT_UP' ? [['price', 'ASC']] : [['price', 'DESC']] : [['createdAt', 'DESC']],
@@ -495,7 +498,8 @@ const getPostFor = async (req, res) => {
         }
       ],
       where: {
-        postType
+        postType,
+        status: true
       },
       order: [['createdAt', 'DESC']],
       offset: page * 10 - 10,
@@ -877,6 +881,22 @@ const findLocation = async (req, res) => {
   }
 }
 
+const browsePosts = async (req, res) => {
+  const { postId } = req.body
+  try {
+    const post = await Posts.findOne({
+      where: {
+        postId
+      }
+    })
+    post.status = true;
+    await post.save();
+    res.send(post)
+  } catch (error) {
+    res.status.send(error)
+  }
+}
+
 const test = async (req, res) => {
   console.log(req.user)
 }
@@ -887,5 +907,5 @@ module.exports = {
   getPostForUser, deletePost, liked,
   repairPost, deleteImagePost,
   deleteUtilitie, test, unLike, getPostUserLike,
-  findLocation, findPostV2
+  findLocation, findPostV2, browsePosts
 };
