@@ -29,11 +29,13 @@ router.get('/',
     }
 )
 
+
 router.get('/:roomId',
     [
-        auth
+        auth,
+        validateRoomId
     ], (req, res) => {
-        getARoom(req, res);s
+        getARoom(req, res);
     }
 )
 

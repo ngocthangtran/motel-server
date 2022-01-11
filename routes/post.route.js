@@ -131,8 +131,10 @@ router.get('/location', [
 })
 
 router.post('/browseposts', [
+  auth,
   validatePostId
 ], (req, res) => {
+  console.log(req.user)
   browsePosts(req, res)
 })
 

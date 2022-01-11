@@ -9,6 +9,7 @@ const createRoom = async (req, res) => {
         name,
         deposit,
         roomTypeId,
+        price
     } = req.body;
     let check;
     try {
@@ -34,6 +35,7 @@ const createRoom = async (req, res) => {
             area,
             deposit,
             roomTypeId,
+            price
         }
         )
         return res.send(room)
@@ -48,7 +50,7 @@ const getAllRoom = async (req, res) => {
     const { buildingId } = req.query;
     try {
         const room = await Room.findAll({
-            attributes: ['roomId', "name"],
+            attributes: ['roomId', "name", "deposit", "price"],
             include: [
                 {
                     model: Building,
@@ -74,7 +76,7 @@ const getAllRoom = async (req, res) => {
             ]
         });
         const data = room.map(el => {
-            const { roomId, Contracts: contract, name } = el;
+            const { roomId, Contracts: contract, name, price: pricePhong, deposit } = el;
 
             let price, renterCount;
 
@@ -94,12 +96,77 @@ const getAllRoom = async (req, res) => {
                 contractId: contract.contractId,
                 contractCount: contract.length,
                 renterCount: renterCount ? renterCount : 0,
-                price: price ? price : "Chưa định giá",
-                stauts: price ? "Đã thuê" : "Chưa thuê"
+                price: price ? price : pricePhong,
+                stauts: price ? "Đã thuê" : "Chưa thuê",
+                deposit
             }
         })
         res.send(data)
     } catch (error) {
+        res.send(error)
+    }
+}
+
+const getARoom = async (req, res) => {
+    const { userId } = req.user;
+    const { roomId } = req.params;
+    console.log("run in here")
+    try {
+        const room = await Room.findOne({
+            attributes: ['roomId', "name", "deposit", "price"],
+            include: [
+                {
+                    model: Building,
+                    attributes: [],
+                    include: {
+                        model: User,
+                        attributes: [],
+                        where: {
+                            userId
+                        }
+                    }
+                },
+                {
+                    model: Contracts,
+                    include: {
+                        model: Renter,
+                        as: 'contractRenter',
+                    }
+                }
+            ],
+            where: {
+                roomId
+            }
+        });
+        const converdata = el => {
+            const { roomId, Contracts: contract, name, price: pricePhong, deposit } = el;
+
+            let price, renterCount;
+
+            if (contract && contract.length > 0) {
+
+                contract.forEach(element => {
+                    if (element.status === false) {
+                        price = element.price
+                        renterCount = element.contractRenter.length
+
+                    }
+                });
+            }
+            return {
+                roomId,
+                name,
+                contractId: contract.contractId,
+                contractCount: contract.length,
+                renterCount: renterCount ? renterCount : 0,
+                price: price ? price : pricePhong,
+                stauts: price ? "Đã thuê" : "Chưa thuê",
+                deposit
+            }
+        }
+        res.send(converdata(room))
+    } catch (error) {
+        console.log(error)
         res.send(error)
     }
 }
@@ -148,9 +215,6 @@ const deleteRoom = async (req, res) => {
     }
 }
 
-const getARoom = (req, res) => {
-
-}
 
 module.exports = {
     createRoom, deleteRoom, getAllRoom, getARoom

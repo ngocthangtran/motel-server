@@ -28,6 +28,10 @@ module.exports = (sequelize) => {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false
             },
+            price: {
+                type: DataTypes.DECIMAL(12, 2),
+                defaultValue: 0
+            },
             roomTypeId: {
                 type: DataTypes.UUID,
                 allowNull: false
