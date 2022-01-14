@@ -11,11 +11,19 @@ const createRoom = async (req, res) => {
         roomTypeId,
         price
     } = req.body;
+    const { userId } = req.user;
+
     let check;
     try {
         check = await Room.findOne({
+            include: {
+                model: Building,
+                where: {
+                    userId
+                }
+            },
             where: {
-                name
+                name,
             }
         })
     } catch (error) {
