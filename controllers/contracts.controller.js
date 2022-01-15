@@ -185,6 +185,7 @@ const getAContract = async (req, res) => {
         })
         const dataConvert = {
             contractId,
+            roomId: room.roomId,
             roomName: room.name,
             startAt: convertDate(startAt),
             endAt: convertDate(endAt),

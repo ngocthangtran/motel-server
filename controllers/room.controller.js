@@ -224,7 +224,33 @@ const deleteRoom = async (req, res) => {
     }
 }
 
+const getRenter = async (req, res) => {
+    const { roomId } = req.params;
+    try {
+        const room = await Room.findOne({
+            include: [
+                {
+                    model: Contracts,
+                    include: {
+                        model: Renter,
+                        as: "contractRenter"
+                    },
+                    where: {
+                        status: false
+                    }
+                }
+            ],
+            where: { roomId }
+        })
+        const contract = room.Contracts[0]
+        const renters = contract.contractRenter;
+        res.send(renters)
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
 
 module.exports = {
-    createRoom, deleteRoom, getAllRoom, getARoom
+    createRoom, deleteRoom, getAllRoom, getARoom, getRenter
 }
