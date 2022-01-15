@@ -99,7 +99,7 @@ const getAllContract = async (req, res) => {
             } = element.dataValues
             const data = {
                 contractId,
-                nameBilding: room.Building.name,
+                nameBuilding: room.Building.name,
                 startAt: convertDate(startAt), endAt: convertDate(endAt),
                 userName: user.name,
                 roomName: room.name,
