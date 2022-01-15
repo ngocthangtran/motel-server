@@ -85,7 +85,8 @@ const getAllContract = async (req, res) => {
                 }, {
                     model: Room
                 }
-            ]
+            ],
+            order: [['createdAt', 'DESC']],
         })
         const takeEffect = [];
         const expired = [];
@@ -316,6 +317,18 @@ const deleteContract = async (req, res) => {
     }
 }
 
+const addRenterContract = async (req, res) => {
+    const { renterIds, contractId } = req.body;
+    try {
+        const contract = await Contracts.findByPk(contractId);
+        await contract.addContractRenter(renterIds)
+        res.send(contract)
+    } catch (error) {
+        console.log(error)
+        res.status(500).send(error)
+    }
+}
+
 module.exports = {
     createContracts,
     getAllContract,
@@ -323,5 +336,6 @@ module.exports = {
     terminateContract,
     repairContracts,
     removeServiceRenter,
-    deleteContract
+    deleteContract,
+    addRenterContract
 }

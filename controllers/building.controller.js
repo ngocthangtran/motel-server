@@ -55,7 +55,8 @@ const getBuilding = async (req, res) => {
                             attributes: ['name'],
                         }
                     }
-                }]
+                }],
+                order: [['createdAt', 'DESC']],
             }
         )
         const converData = listBuilding.map(item => {
@@ -92,7 +93,7 @@ const deleteBulding = async (req, res) => {
                 buildingId
             }
         })
-        
+
         if (building.Rooms.length === 0) {
             try {
                 const result = await Building.destroy({

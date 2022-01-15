@@ -1,5 +1,5 @@
 const express = require('express');
-const { createContracts, getContract, getAContract, getAllContract, terminateContract, repairContracts, removeServiceRenter, deleteContract } = require('../controllers/contracts.controller');
+const { createContracts, getContract, getAContract, getAllContract, terminateContract, repairContracts, removeServiceRenter, deleteContract, addRenterContract } = require('../controllers/contracts.controller');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const { validateContractId } = require('../middleware/validate/contracts');
@@ -76,5 +76,13 @@ router.delete('/delete/:contractId',
         deleteContract(req, res);
     }
 )
+
+router.post('/addrenters/', [
+    auth,
+    validateContractId,
+    validateRenters
+], (req, res) => {
+    addRenterContract(req, res);
+})
 
 module.exports = router;

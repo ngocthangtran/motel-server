@@ -27,7 +27,8 @@ const getRenter = async (req, res) => {
             },
             where: {
                 userId
-            }
+            },
+            order: [['createdAt', 'DESC']],
         })
         res.send(renter)
     } catch (error) {

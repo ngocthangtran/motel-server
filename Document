@@ -307,6 +307,17 @@
     auth: true
     DELETE: localhost:7777/contract/delete/:contractId
 
+    *add renters to contract
+    auth: true
+    POST: localhost:7777/contract/addrenters
+    body: {
+        "contractId":"32f913d5-9d22-420e-b770-cb190903ed5e",
+        "renterIds":[
+            "32c7fef2-3411-4c92-9ca2-b8d0632ba7a0",
+            "1b0cbd5d-1c21-4cc7-a4b4-628cd5823b2e"
+        ]
+    }
+
 ***Manager
     *get all room on all billding
     auth: true,

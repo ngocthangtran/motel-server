@@ -44,7 +44,7 @@ const getServiceForUser = async (req, res) => {
         const services = await Services.findAll({
             where: {
                 userId
-            }
+            }, order: [['createdAt', 'DESC']],
         })
         res.send(services)
     } catch (error) {

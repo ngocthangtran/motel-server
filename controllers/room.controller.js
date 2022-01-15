@@ -81,7 +81,8 @@ const getAllRoom = async (req, res) => {
                         as: 'contractRenter',
                     }
                 }
-            ]
+            ],
+            order: [['createdAt', 'DESC']],
         });
         const data = room.map(el => {
             const { roomId, Contracts: contract, name, price: pricePhong, deposit } = el;
