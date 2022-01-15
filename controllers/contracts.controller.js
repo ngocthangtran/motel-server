@@ -1,5 +1,5 @@
 const e = require('express');
-const { Contracts, User, Room, Services, Renter, sequelize, ContractService } = require('../db');
+const { Contracts, User, Room, Services, Renter, sequelize, ContractService, Building } = require('../db');
 
 const convertDate = (date) => {
     const today = new Date(date)
@@ -83,7 +83,8 @@ const getAllContract = async (req, res) => {
                         userId
                     }
                 }, {
-                    model: Room
+                    model: Room,
+                    include: Building
                 }
             ],
             order: [['createdAt', 'DESC']],
@@ -97,7 +98,9 @@ const getAllContract = async (req, res) => {
                 status
             } = element.dataValues
             const data = {
-                contractId, startAt: convertDate(startAt), endAt: convertDate(endAt),
+                contractId,
+                nameBilding: room.Building.name,
+                startAt: convertDate(startAt), endAt: convertDate(endAt),
                 userName: user.name,
                 roomName: room.name,
                 status
@@ -115,20 +118,22 @@ const getAllContract = async (req, res) => {
                 terminateAContract.push(data)
             }
         });
-        res.send({
-            takeEffect: {
-                count: takeEffect.length,
-                data: takeEffect
-            },
-            expired: {
-                count: expired.length,
-                data: expired
-            },
-            terminateAContract: {
-                count: terminateAContract.length,
-                data: terminateAContract
+        res.send(
+            {
+                takeEffect: {
+                    count: takeEffect.length,
+                    data: takeEffect
+                },
+                expired: {
+                    count: expired.length,
+                    data: expired
+                },
+                terminateAContract: {
+                    count: terminateAContract.length,
+                    data: terminateAContract
+                }
             }
-        })
+        )
     } catch (error) {
         res.status(500).send(error)
     }
