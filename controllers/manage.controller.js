@@ -258,7 +258,6 @@ const serviceOfRoom = async (req, res) => {
                         { contractId: service.contractId },
                     ],
                 },
-                group: ['serviceId'],
             })
         }
         const convert = (dataService, dataBill) => {
