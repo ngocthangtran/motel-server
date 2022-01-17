@@ -239,8 +239,7 @@ const serviceOfRoom = async (req, res) => {
                     sequelize.where(sequelize.fn("YEAR", sequelize.col('date')), year),
                     { contractId: service.contractId },
                 ],
-            },
-            group: ['serviceId'],
+            }
         })
 
         var maxDate = await Bills_services.findOne({
