@@ -242,13 +242,15 @@ const serviceOfRoom = async (req, res) => {
             }
         })
 
+
+
         var maxDate = await Bills_services.findOne({
             attributes: [[sequelize.fn('max', sequelize.col('date')), 'max']],
             where: {
                 contractId: service.contractId
             },
-            group: ['serviceId'],
         })
+
         if (bill_service.length === 0 && maxDate) {
             maxDate = maxDate.dataValues.max
             bill_service = await Bills_services.findAll({
