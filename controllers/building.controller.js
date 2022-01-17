@@ -174,6 +174,42 @@ const removeService = async (req, res) => {
     }
 }
 
+const getABuilding = async (req, res) => {
+    const { buildingId } = req.params;
+    const userId = req.user.userId;
+    try {
+        const building = await Building.findOne({
+            include: [
+                {
+                    model: Room
+                }, {
+                    model: Services,
+                    as: 'buildingService'
+                },
+                {
+                    model: Ward,
+                    include: {
+                        model: District,
+                        include: Province
+                    }
+                }
+            ],
+            where: {
+                buildingId, userId
+            }
+        });
+        const { Room: room, buildingService, Ward: ward } = building;
+        res.send({
+            buildingId,
+            name: building.name,
+            address: `${building.address}, ${ward.name}, ${ward.District.name}, ${ward.District.Province.name}`,
+            roomCount: room.length,
+            service: buildingService
+        })
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
 
 module.exports = {
     createBuilding,
@@ -181,5 +217,6 @@ module.exports = {
     deleteBulding,
     repairBuilding,
     addService,
-    removeService
+    removeService,
+    getABuilding
 }

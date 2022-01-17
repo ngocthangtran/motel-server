@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router();
-const { createBuilding, getBuilding, deleteBulding, repairBuilding, addService, removeService } = require('../controllers/building.controller');
+const { createBuilding, getBuilding, deleteBulding, repairBuilding, addService, removeService, getABuilding } = require('../controllers/building.controller');
 const auth = require('../middleware/auth')
 const { validateWardId } = require('../middleware/validate/ward');
 const { validateServiceId } = require('../middleware/validate/services');
@@ -63,5 +63,11 @@ router.delete('/removeservice',
         removeService(req, res);
     }
 )
+
+router.get('/:buildingId', [
+    auth, validateBuildId
+], (req, res) => {
+    getABuilding(req, res);
+})
 
 module.exports = router

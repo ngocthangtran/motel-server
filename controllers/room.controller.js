@@ -19,7 +19,7 @@ const createRoom = async (req, res) => {
             include: {
                 model: Building,
                 where: {
-                    userId
+                    userId, buildingId
                 }
             },
             where: {
