@@ -203,10 +203,11 @@ const getABuilding = async (req, res) => {
             buildingId,
             name: building.name,
             address: `${building.address}, ${ward.name}, ${ward.District.name}, ${ward.District.Province.name}`,
-            roomCount: room.length,
+            roomCount: room ? room.length : 0,
             service: buildingService
         })
     } catch (error) {
+        console.log(error)
         res.status(500).send(error)
     }
 }

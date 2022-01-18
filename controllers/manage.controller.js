@@ -124,6 +124,7 @@ const getContractTakeEffect = async (req, res) => {
             }
             return beforeValue
         }, [])
+
         // lay tat ca cac data
         var data2 = contract.reduce((beforeValue, afterValue) => {
             var {
@@ -132,6 +133,7 @@ const getContractTakeEffect = async (req, res) => {
             const { Building, name: nameRoom, roomId } = room;
             const { buildingId, name, address } = Building;
             if (allRoomIdExit.length !== 0) {
+                console.log(3)
                 allRoomIdExit.forEach(el => {
                     if (el !== roomId) {
                         if (!beforeValue.find(value => value.buildingId === buildingId)) {
@@ -150,6 +152,7 @@ const getContractTakeEffect = async (req, res) => {
                                 ]
                             })
                         } else {
+
                             const indexBulding = beforeValue.findIndex(value => value.buildingId === buildingId)
 
                             beforeValue[indexBulding].room.push({
@@ -163,8 +166,8 @@ const getContractTakeEffect = async (req, res) => {
                         }
                     }
                 })
-            }
-            if (!beforeValue.find(value => value.buildingId === buildingId)) {
+            } else if (!beforeValue.find(value => value.buildingId === buildingId)) {
+                console.log(1)
                 beforeValue.push({
                     buildingId: buildingId,
                     name: name,
@@ -180,6 +183,7 @@ const getContractTakeEffect = async (req, res) => {
                     ]
                 })
             } else {
+                console.log(2)
                 const indexBulding = beforeValue.findIndex(value => value.buildingId === buildingId)
                 beforeValue[indexBulding].room.push({
                     roomId,
@@ -191,7 +195,6 @@ const getContractTakeEffect = async (req, res) => {
                 })
             }
             return beforeValue
-
         }, [])
 
         res.send({
