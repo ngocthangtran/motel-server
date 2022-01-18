@@ -242,10 +242,19 @@ const getRenter = async (req, res) => {
             ],
             where: { roomId }
         })
-        const contract = room.Contracts[0]
-        const renters = contract.contractRenter;
-        res.send(renters)
+
+        if (room) {
+            const contract = room.Contracts[0]
+            const renters = contract.contractRenter;
+            res.send(renters)
+        } else {
+            return res.status(404).send({
+                status: 404,
+                message: "Không có người thuê tại phòng này!"
+            })
+        }
     } catch (error) {
+        console.log(error)
         res.status(500).send(error)
     }
 }
