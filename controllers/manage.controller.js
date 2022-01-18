@@ -223,7 +223,7 @@ const serviceOfRoom = async (req, res) => {
                             model: FeeBaseOn,
                             as: "createFeeBasseOn"
                         },
-                        attributes: ["name", "serviceId", "price", "unit"]
+                        attributes: ["name", "serviceId", "price", "unit", "icon"]
                     }
                 },
             ],
@@ -270,16 +270,17 @@ const serviceOfRoom = async (req, res) => {
 
             contractServices.forEach(el => {
                 const { serviceId, startValue } = el.dataValues;
-                const { name, price, unit, createFeeBasseOn } = el.dataValues.Service
+                const { name, price, unit, createFeeBasseOn, icon } = el.dataValues.Service
+                console.log(icon)
                 const check = listSingleClosingFeeBaseOn.find(el => {
                     return el === createFeeBasseOn.fee_base_on_id
                 })
                 if (check) {
                     const a = dataBill.findIndex(el => el.serviceId === serviceId)
                     if (a === -1) {
-                        return service.push({ name, serviceId, price, unit, lastValue: startValue })
+                        return service.push({ name, serviceId, price, unit, icon, lastValue: startValue })
                     }
-                    return service.push({ name, serviceId, price, unit, lastValue: dataBill[a].currentValue })
+                    return service.push({ name, serviceId, price, unit, icon, lastValue: dataBill[a].currentValue })
                 }
 
             })
@@ -291,7 +292,7 @@ const serviceOfRoom = async (req, res) => {
             }
             return data
         }
-        // res.send(bill_service)
+        // res.send(service)
         res.send(convert(service, bill_service))
 
     } catch (error) {
