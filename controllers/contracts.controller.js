@@ -177,9 +177,9 @@ const getAContract = async (req, res) => {
         } = contract[0].dataValues;
         const listService = contractServices.map(el => {
             const { serviceId, startValue } = el;
-            const { name, price, unit } = el.dataValues.Service
+            const { name, price, unit, icon } = el.dataValues.Service
             return {
-                serviceId, name, price, unit, startValue
+                serviceId, name, price, unit, icon, startValue
             }
         })
         const listRenter = contractRenter.map(el => {
