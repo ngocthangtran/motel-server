@@ -1,6 +1,6 @@
 const { application } = require('express');
 const express = require('express');
-const { getContractTakeEffect, singleClosing, serviceOfRoom, createBuild, billservice, createBill, getAllBillonMonth, billDetails } = require('../controllers/manage.controller');
+const { getContractTakeEffect, singleClosing, serviceOfRoom, createBuild, billservice, createBill, getAllBillonMonth, billDetails, deleteClosing } = require('../controllers/manage.controller');
 const auth = require('../middleware/auth');
 const { validateBillId } = require('../middleware/validate/billId');
 const { validateBuildId } = require('../middleware/validate/building');
@@ -66,6 +66,13 @@ router.get('/detailsbill/:billId', [
     auth, validateBillId
 ], (req, res) => {
     billDetails(req, res);
+})
+
+router.patch('/deleteclosing', [
+    auth,
+    validateContractId
+], (req, res) => {
+    deleteClosing(req, res);
 })
 
 module.exports = router;

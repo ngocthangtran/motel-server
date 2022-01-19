@@ -707,9 +707,80 @@ const billDetails = async (req, res) => {
     }
 }
 
+const deleteClosing = async (req, res) => {
+    const { date, contractId } = req.body;
+    let checkBill;
+    const dateType = new Date(date)
+
+    const month = dateType.getMonth() + 1,
+        year = dateType.getFullYear()
+    try {
+        checkBill = await Contracts.findOne({
+            include: [
+                {
+                    model: Bill,
+                    where: {
+                        [Op.and]: [
+                            sequelize.where(sequelize.fn("MONTH", sequelize.col('date')), month),
+                            sequelize.where(sequelize.fn("YEAR", sequelize.col('date')), year)
+                        ]
+                    }
+                }
+            ],
+            where: {
+                contractId
+            }
+        })
+    } catch (error) {
+        res.status(500).send({
+            message: "err at check bull",
+            error
+        })
+    }
+    if (checkBill) return res.status(400).send({
+        message: `Không thể xóa chốt dịch vụ trong tháng ${month} vì đã tồn tại hóa đơn!`
+    })
+    try {
+
+        const contract = await Contracts.findOne({
+            include: [
+                {
+                    model: Bills_services,
+                    where: {
+                        [Op.and]: [
+                            sequelize.where(sequelize.fn("MONTH", sequelize.col('date')), month),
+                            sequelize.where(sequelize.fn("YEAR", sequelize.col('date')), year)
+                        ]
+                    }
+                }
+            ],
+            where: {
+                contractId
+            }
+        })
+        if (!contract) return res.status(404).send({ message: "Không tìm thấy dịch vụ được chốt của phòng này!" })
+        const listBillService = contract.Bills_services.map(el => {
+            return el.billServiceId
+        })
+        await Bills_services.destroy(
+            {
+                where: {
+                    billServiceId: listBillService
+                }
+            }
+        )
+        return res.send({
+            message: `Đã xóa chốt dịch vụ của tháng ${month} năm ${year}`
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).send(error);
+    }
+}
+
 module.exports = {
     getContractTakeEffect, singleClosing,
     serviceOfRoom,
     createBill, billservice, getAllBillonMonth,
-    billDetails
+    billDetails, deleteClosing
 }
