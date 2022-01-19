@@ -59,6 +59,7 @@ const getContractTakeEffect = async (req, res) => {
                 status: false
             }
         })
+
         const contract = await Contracts.findAll({
             include: [
                 {
@@ -124,7 +125,6 @@ const getContractTakeEffect = async (req, res) => {
             }
             return beforeValue
         }, [])
-
         // lay tat ca cac data
         var data2 = contract.reduce((beforeValue, afterValue) => {
             var {
@@ -133,8 +133,7 @@ const getContractTakeEffect = async (req, res) => {
             const { Building, name: nameRoom, roomId } = room;
             const { buildingId, name, address } = Building;
             if (allRoomIdExit.length !== 0) {
-                console.log(3)
-                allRoomIdExit.forEach(el => {
+                allRoomIdExit.forEach((el, index) => {
                     if (el !== roomId) {
                         if (!beforeValue.find(value => value.buildingId === buildingId)) {
                             beforeValue.push({
@@ -152,9 +151,8 @@ const getContractTakeEffect = async (req, res) => {
                                 ]
                             })
                         } else {
-
+                            // console.log(2);
                             const indexBulding = beforeValue.findIndex(value => value.buildingId === buildingId)
-
                             beforeValue[indexBulding].room.push({
                                 roomId,
                                 name: nameRoom,
@@ -167,7 +165,7 @@ const getContractTakeEffect = async (req, res) => {
                     }
                 })
             } else if (!beforeValue.find(value => value.buildingId === buildingId)) {
-                console.log(1)
+                console.log(3)
                 beforeValue.push({
                     buildingId: buildingId,
                     name: name,
@@ -199,7 +197,7 @@ const getContractTakeEffect = async (req, res) => {
 
         res.send({
             "exitmonth": exitmonth,
-            "notExitMonth": data2
+            "notExitMonth": contract.length === allRoomIdExit.length ? [] : data2
         })
     } catch (error) {
         console.log(error)
