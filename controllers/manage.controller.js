@@ -59,7 +59,6 @@ const getContractTakeEffect = async (req, res) => {
                 status: false
             }
         })
-
         const contract = await Contracts.findAll({
             include: [
                 {
@@ -125,47 +124,20 @@ const getContractTakeEffect = async (req, res) => {
             }
             return beforeValue
         }, [])
-        // lay tat ca cac data
-        var data2 = contract.reduce((beforeValue, afterValue) => {
+        if (allRoomIdExit.length !== 0) {
+            allRoomIdExit.forEach(el => {
+                const index = contract.findIndex(ele => ele.roomId === 1);
+                contract.splice(index, 1)
+            })
+        }
+        var notExitMonth = contract.reduce((beforeValue, afterValue) => {
             var {
                 Room: room,
             } = afterValue.dataValues
             const { Building, name: nameRoom, roomId } = room;
             const { buildingId, name, address } = Building;
-            if (allRoomIdExit.length !== 0) {
-                allRoomIdExit.forEach((el, index) => {
-                    if (el !== roomId) {
-                        if (!beforeValue.find(value => value.buildingId === buildingId)) {
-                            beforeValue.push({
-                                buildingId: buildingId,
-                                name: name,
-                                room: [
-                                    {
-                                        roomId,
-                                        name: nameRoom,
-                                        address,
-                                        ward: Building.Ward.name,
-                                        District: Building.Ward.District.name,
-                                        Province: Building.Ward.District.Province.name,
-                                    }
-                                ]
-                            })
-                        } else {
-                            // console.log(2);
-                            const indexBulding = beforeValue.findIndex(value => value.buildingId === buildingId)
-                            beforeValue[indexBulding].room.push({
-                                roomId,
-                                name: nameRoom,
-                                address,
-                                ward: Building.Ward.name,
-                                District: Building.Ward.District.name,
-                                Province: Building.Ward.District.Province.name,
-                            })
-                        }
-                    }
-                })
-            } else if (!beforeValue.find(value => value.buildingId === buildingId)) {
-                console.log(3)
+            allRoomIdExit.push(roomId);
+            if (!beforeValue.find(value => value.buildingId === buildingId)) {
                 beforeValue.push({
                     buildingId: buildingId,
                     name: name,
@@ -181,7 +153,6 @@ const getContractTakeEffect = async (req, res) => {
                     ]
                 })
             } else {
-                console.log(2)
                 const indexBulding = beforeValue.findIndex(value => value.buildingId === buildingId)
                 beforeValue[indexBulding].room.push({
                     roomId,
@@ -194,10 +165,9 @@ const getContractTakeEffect = async (req, res) => {
             }
             return beforeValue
         }, [])
-
         res.send({
             "exitmonth": exitmonth,
-            "notExitMonth": contract.length === allRoomIdExit.length ? [] : data2
+            "notExitMonth": notExitMonth
         })
     } catch (error) {
         console.log(error)

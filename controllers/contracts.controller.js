@@ -100,7 +100,7 @@ const getAllContract = async (req, res) => {
             const data = {
                 contractId,
                 nameBuilding: room.Building.name,
-                startAt: convertDate(startAt), endAt: convertDate(endAt),
+                startAt: convertDate(startAt), endAt: endAt ? convertDate(endAt) : null,
                 userName: user.name,
                 roomName: room.name,
                 status
@@ -118,6 +118,7 @@ const getAllContract = async (req, res) => {
                 terminateAContract.push(data)
             }
         });
+        // res.send(contract)
         res.send(
             {
                 takeEffect: {
