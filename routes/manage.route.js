@@ -68,10 +68,11 @@ router.get('/detailsbill/:billId', [
     billDetails(req, res);
 })
 
-router.patch('/deleteclosing', [
+router.delete('/deleteclosing', [
     auth,
     validateContractId
 ], (req, res) => {
+    console.log(123)
     deleteClosing(req, res);
 })
 

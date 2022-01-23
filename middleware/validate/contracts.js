@@ -1,8 +1,7 @@
 const { Contracts } = require("../../db");
 
 const validateContractId = async (req, res, next) => {
-    const contractId = req.body.contractId || req.params.contractId;
-
+    const contractId = req.body.contractId || req.params.contractId || req.query.contractId;
     if (!contractId) return res.send({ error: "contractId is required" })
     const contract = await Contracts.findByPk(contractId)
     if (!contract) {

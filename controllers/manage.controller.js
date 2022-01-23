@@ -680,7 +680,8 @@ const billDetails = async (req, res) => {
 }
 
 const deleteClosing = async (req, res) => {
-    const { date, contractId } = req.body;
+    console.log('run here')
+    const { date, contractId } = req.query;
     let checkBill;
     const dateType = new Date(date)
 
