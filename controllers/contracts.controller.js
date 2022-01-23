@@ -194,7 +194,7 @@ const getAContract = async (req, res) => {
             roomId: room.roomId,
             roomName: room.name,
             startAt: convertDate(startAt),
-            endAt: convertDate(endAt),
+            endAt: endAt ? convertDate(endAt) : null,
             userName: user.name,
             price, deposit,
             paymentCycle,

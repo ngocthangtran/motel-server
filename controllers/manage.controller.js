@@ -87,6 +87,7 @@ const getContractTakeEffect = async (req, res) => {
             }
         })
 
+
         // lay data da co trong thang
         const allRoomIdExit = [];
         const exitmonth = contractServieExitMonth.reduce((beforeValue, afterValue) => {
@@ -128,7 +129,8 @@ const getContractTakeEffect = async (req, res) => {
         }, [])
         if (allRoomIdExit.length !== 0) {
             allRoomIdExit.forEach(el => {
-                const index = contract.findIndex(ele => ele.roomId === 1);
+                console.log(el)
+                const index = contract.findIndex(ele => ele.roomId === el);
                 contract.splice(index, 1)
             })
         }
