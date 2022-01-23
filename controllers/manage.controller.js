@@ -91,6 +91,7 @@ const getContractTakeEffect = async (req, res) => {
         const allRoomIdExit = [];
         const exitmonth = contractServieExitMonth.reduce((beforeValue, afterValue) => {
             var {
+                contractId,
                 Room: room,
             } = afterValue.dataValues
             const { Building, name: nameRoom, roomId } = room;
@@ -102,6 +103,7 @@ const getContractTakeEffect = async (req, res) => {
                     name: name,
                     room: [
                         {
+                            contractId,
                             roomId,
                             name: nameRoom,
                             address,
@@ -132,6 +134,7 @@ const getContractTakeEffect = async (req, res) => {
         }
         var notExitMonth = contract.reduce((beforeValue, afterValue) => {
             var {
+                contractId,
                 Room: room,
             } = afterValue.dataValues
             const { Building, name: nameRoom, roomId } = room;
@@ -143,6 +146,7 @@ const getContractTakeEffect = async (req, res) => {
                     name: name,
                     room: [
                         {
+                            contractId,
                             roomId,
                             name: nameRoom,
                             address,
