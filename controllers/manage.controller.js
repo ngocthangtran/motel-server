@@ -753,9 +753,140 @@ const deleteClosing = async (req, res) => {
     }
 }
 
+const notExitBill = async (req, res) => {
+    const { date } = req.query;
+    const dateType = new Date(date);
+    const month = dateType.getMonth() + 1, year = dateType.getFullYear();
+    try {
+        const exitBill = await Contracts.findAll({
+            include: [
+                {
+                    model: User,
+                    where: {
+                        userId: req.user.userId
+                    }
+                },
+                {
+                    model: Bill,
+                    where: {
+                        [Op.and]: [
+                            sequelize.where(sequelize.fn("MONTH", sequelize.col('date')), month),
+                            sequelize.where(sequelize.fn("YEAR", sequelize.col('date')), year)
+                        ]
+                    }
+                }, {
+                    model: Room,
+                    include: {
+                        model: Building
+                    }
+                }
+            ], where: {
+                status: false
+            }
+        })
+        const listExit = [];
+        const exitmonth = exitBill.reduce((beforeValue, afterValue) => {
+            var {
+                contractId,
+                Room: room,
+            } = afterValue.dataValues
+            const { Building, name: nameRoom, roomId } = room;
+            const { buildingId, name, address } = Building;
+            listExit.push(roomId);
+            if (!beforeValue.find(value => value.buildingId === buildingId)) {
+                beforeValue.push({
+                    buildingId: buildingId,
+                    name: name,
+                    room: [
+                        {
+                            contractId,
+                            roomId,
+                            name: nameRoom,
+                            address
+                        }
+                    ]
+                })
+            } else {
+                const indexBulding = beforeValue.findIndex(value => value.buildingId === buildingId)
+                beforeValue[indexBulding].room.push({
+                    roomId,
+                    name: nameRoom,
+                    address
+                })
+            }
+            return beforeValue
+        }, [])
+        const notExitBill = await Contracts.findAll({
+            include: [
+                {
+                    model: User,
+                    where: {
+                        userId: req.user.userId
+                    }
+                },
+                {
+                    model: Bill,
+                }, {
+                    model: Room,
+                    include: {
+                        model: Building
+                    }
+                }
+            ], where: {
+                status: false
+            }
+        })
+
+        if (listExit.length !== 0) {
+            listExit.forEach(el => {
+                const index = notExitBill.findIndex(ele => ele.roomId === el);
+                notExitBill.splice(index, 1)
+            })
+        }
+
+        const notExitmonth = notExitBill.reduce((beforeValue, afterValue) => {
+            var {
+                contractId,
+                Room: room,
+            } = afterValue.dataValues
+            const { Building, name: nameRoom, roomId } = room;
+            const { buildingId, name, address } = Building;
+            listExit.push(roomId);
+            if (!beforeValue.find(value => value.buildingId === buildingId)) {
+                beforeValue.push({
+                    buildingId: buildingId,
+                    name: name,
+                    room: [
+                        {
+                            contractId,
+                            roomId,
+                            name: nameRoom,
+                            address
+                        }
+                    ]
+                })
+            } else {
+                const indexBulding = beforeValue.findIndex(value => value.buildingId === buildingId)
+                beforeValue[indexBulding].room.push({
+                    roomId,
+                    name: nameRoom,
+                    address
+                })
+            }
+            return beforeValue
+        }, [])
+        res.send({
+            exitBill: exitmonth,
+            notExitBill: notExitmonth
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 module.exports = {
     getContractTakeEffect, singleClosing,
     serviceOfRoom,
     createBill, billservice, getAllBillonMonth,
-    billDetails, deleteClosing
+    billDetails, deleteClosing, notExitBill
 }

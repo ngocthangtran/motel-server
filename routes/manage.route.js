@@ -1,6 +1,6 @@
 const { application } = require('express');
 const express = require('express');
-const { getContractTakeEffect, singleClosing, serviceOfRoom, createBuild, billservice, createBill, getAllBillonMonth, billDetails, deleteClosing } = require('../controllers/manage.controller');
+const { getContractTakeEffect, singleClosing, serviceOfRoom, createBuild, billservice, createBill, getAllBillonMonth, billDetails, deleteClosing, notExitBill } = require('../controllers/manage.controller');
 const auth = require('../middleware/auth');
 const { validateBillId } = require('../middleware/validate/billId');
 const { validateBuildId } = require('../middleware/validate/building');
@@ -46,6 +46,12 @@ router.get('/billservice',
     }
 
 )
+
+router.get('/notexistsbill', [
+    auth
+], (req, res) => {
+    notExitBill(req, res);
+})
 
 router.post('/createbill',
     [
