@@ -1,7 +1,6 @@
-const e = require('express');
 const { Op } = require('sequelize');
 const { Contracts, User, Room, Building, Province, Ward, District, Services,
-    FeeBaseOn, Bills_services, sequelize, ContractService, Bill
+    FeeBaseOn, Bills_services, sequelize, ContractService, Bill, Renter
 } = require('../db');
 
 const convertDate = (date) => {
@@ -368,6 +367,7 @@ const billservice = async (req, res) => {
                 roomId, userId, status: false
             }
         })
+
     } catch (error) {
         console.log(error)
         res.status(500).send({
@@ -416,12 +416,18 @@ const billservice = async (req, res) => {
         rent = Math.round((parseInt(contract.price) / lastDay) * diffDays)
     }
     // tinhs tieenf
+    var renterCount = 1;
     try {
         const service = await Contracts.findOne({
             include: [
+
                 {
                     model: Room,
                     attributes: ['name']
+                },
+                {
+                    model: Renter,
+                    as: "contractRenter"
                 },
                 {
                     model: ContractService,
@@ -440,6 +446,10 @@ const billservice = async (req, res) => {
                 roomId,
             },
         })
+
+        if (service.contractRenter.length > 0) {
+            renterCount = service.contractRenter.length;
+        }
 
         var bill_service = await sequelize.query(`select *
          from motel.bills_services 
@@ -474,14 +484,18 @@ const billservice = async (req, res) => {
 
             contractServices.forEach(el => {
                 const { serviceId, startValue } = el.dataValues;
-                const { name, price, unit, icon } = el.dataValues.Service
+                const { name, price, unit, icon, createFeeBasseOn } = el.dataValues.Service
+                const fee_base_on_id = createFeeBasseOn.fee_base_on_id;
                 const a = dataBill[0].findIndex(el => {
                     return el.serviceId === serviceId
                 })
                 if (a === -1) {
-                    return service.push({ name, serviceId, icon, price, unit, lastValue: startValue, currentValue: null, intoMoney: null })
+                    return service.push({ name, serviceId, icon, feeBaseOnId: fee_base_on_id, price, unit, lastValue: startValue, currentValue: null, intoMoney: null })
                 }
-                return service.push({ serviceId, icon, billServiceId: dataBill[0][a].billServiceId, name, price, unit, lastValue: dataBill[0][a].lastValue, currentValue: dataBill[0][a].currentValue, intoMoney: dataBill[0][a].price })
+                if (fee_base_on_id === "6c368419-c07c-4b72-b8a0-a2b5c96ee030") {
+                    return service.push({ serviceId, icon, feeBaseOnId: fee_base_on_id, billServiceId: dataBill[0][a].billServiceId, name, price, unit, lastValue: dataBill[0][a].lastValue, currentValue: dataBill[0][a].currentValue, intoMoney: dataBill[0][a].price * renterCount })
+                }
+                return service.push({ serviceId, icon, feeBaseOnId: fee_base_on_id, billServiceId: dataBill[0][a].billServiceId, name, price, unit, lastValue: dataBill[0][a].lastValue, currentValue: dataBill[0][a].currentValue, intoMoney: dataBill[0][a].price })
 
             })
 
@@ -493,6 +507,7 @@ const billservice = async (req, res) => {
             endDay,
             rent,
             diffDays,
+            renterCount,
             contractId: contract.contractId,
             service: convert(service, bill_service)
         })
