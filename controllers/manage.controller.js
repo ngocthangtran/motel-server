@@ -432,7 +432,7 @@ const billservice = async (req, res) => {
                             model: FeeBaseOn,
                             as: "createFeeBasseOn"
                         },
-                        attributes: ["name", "serviceId", "price", "unit"]
+                        attributes: ["name", "serviceId", "price", "unit", "icon"]
                     }
                 },
             ],
@@ -474,14 +474,14 @@ const billservice = async (req, res) => {
 
             contractServices.forEach(el => {
                 const { serviceId, startValue } = el.dataValues;
-                const { name, price, unit } = el.dataValues.Service
+                const { name, price, unit, icon } = el.dataValues.Service
                 const a = dataBill[0].findIndex(el => {
                     return el.serviceId === serviceId
                 })
                 if (a === -1) {
-                    return service.push({ name, serviceId, price, unit, lastValue: startValue, currentValue: null, intoMoney: null })
+                    return service.push({ name, serviceId, icon, price, unit, lastValue: startValue, currentValue: null, intoMoney: null })
                 }
-                return service.push({ serviceId, billServiceId: dataBill[0][a].billServiceId, name, price, unit, lastValue: dataBill[0][a].lastValue, currentValue: dataBill[0][a].currentValue, intoMoney: dataBill[0][a].price })
+                return service.push({ serviceId, icon, billServiceId: dataBill[0][a].billServiceId, name, price, unit, lastValue: dataBill[0][a].lastValue, currentValue: dataBill[0][a].currentValue, intoMoney: dataBill[0][a].price })
 
             })
 
