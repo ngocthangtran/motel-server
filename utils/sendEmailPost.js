@@ -5,7 +5,9 @@ const account = {
     pass: '12345678@_'
 }
 
-const sendMail = (req, res, postId) => {
+
+
+const sendEmailFun = (mailOption) => {
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -13,6 +15,16 @@ const sendMail = (req, res, postId) => {
             pass: account.pass
         }
     })
+    transporter.sendMail(mailOption, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    })
+}
+const sendMail = (req, res, postId) => {
+
 
     //send user
     const mailOtionUser = {
@@ -24,14 +36,8 @@ const sendMail = (req, res, postId) => {
     Trong thời gian chờ đợi bạn có thể xem qua các chức năng khác của ứng dụng như quản lý nhà trọ cho bạn.</br>
     Chức năng đang trong quá trình phát triển và được sử dụng hoàn toàn miễn phí. Hãy góp ý giúp chúng tôi thông quan email này</p>`
     }
+    sendEmailFun(mailOtionUser)
 
-    transporter.sendMail(mailOtionUser, function (error, info) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    })
 
     //send add admin
 
@@ -42,13 +48,21 @@ const sendMail = (req, res, postId) => {
         html: `<h3>Một user mới đăng bài trên TroVn</h3>
         <p>Duyệt bài đăng tại ${process.env.BASE_URL_ADMIN}/post/${postId}</p>`
     }
-    transporter.sendMail(mailOtionAdmin, function (error, info) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    })
+    sendEmailFun(mailOtionUser)
 }
 
-module.exports = sendMail;
+const notificationLiked = (emailUserPost, emailUserLike, postId) => {
+    // if (emailUserPost === emailUserLike) {
+    //     return
+    // }
+    const mailOption = {
+        from: account.user,
+        to: emailUserPost,
+        subject: `Người dùng quan tâm bài đăng`,
+        html: `<h3>Người dùng ${emailUserLike} quan tâm đến bài đăng của bạn</h3>
+        <p>Xem bài đăng tại ${process.env.BASE_URL_ADMIN}/post/${postId}</p>`
+    }
+    sendEmailFun(mailOption)
+}
+
+module.exports = { sendMail, notificationLiked };
