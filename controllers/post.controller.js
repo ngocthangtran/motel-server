@@ -734,7 +734,7 @@ const liked = async (req, res) => {
       }
     })
     await post.addLiked(userId);
-    sendMail.notificationLiked(req.user.email, post.User.email, postId)
+    sendMail.notificationLiked(post.User.email, req.user, postId)
     res.send(post)
   } catch (error) {
     console.log(error)

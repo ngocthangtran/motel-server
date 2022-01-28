@@ -51,16 +51,19 @@ const sendMail = (req, res, postId) => {
     sendEmailFun(mailOtionUser)
 }
 
-const notificationLiked = (emailUserPost, emailUserLike, postId) => {
-    // if (emailUserPost === emailUserLike) {
-    //     return
-    // }
+const notificationLiked = (emailUserPost, userLiked, postId) => {
+    if (emailUserPost === userLiked.email) {
+        return
+    }
     const mailOption = {
         from: account.user,
         to: emailUserPost,
         subject: `Người dùng quan tâm bài đăng`,
-        html: `<h3>Người dùng ${emailUserLike} quan tâm đến bài đăng của bạn</h3>
-        <p>Xem bài đăng tại ${process.env.BASE_URL_ADMIN}/post/${postId}</p>`
+        html: `<h3>Người dùng ${userLiked.name} quan tâm đến bài đăng của bạn</h3>
+        <p>Xem bài đăng tại ${process.env.BASE_URL_ADMIN}/post/${postId}</p>
+        <p>Tên người quan tâm: ${userLiked.name}</p>
+        <p>Email người quan tâm: ${userLiked.email}</p>
+        `
     }
     sendEmailFun(mailOption)
 }
