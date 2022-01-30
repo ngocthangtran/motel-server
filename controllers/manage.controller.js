@@ -899,13 +899,24 @@ const notExitBill = async (req, res) => {
     }
 }
 
-const payBill = (req, res) => {
-
+const payBill = async (req, res) => {
+    const { billId } = req.params;
+    try {
+        const bill = await Bill.findOne({
+            where: {
+                billId
+            }
+        })
+        await bill.update({ status: true })
+        res.send(post)
+    } catch (error) {
+        res.status(500).send(error)
+    }
 }
 
 module.exports = {
     getContractTakeEffect, singleClosing,
     serviceOfRoom,
     createBill, billservice, getAllBillonMonth,
-    billDetails, deleteClosing, notExitBill
+    billDetails, deleteClosing, notExitBill, payBill
 }
