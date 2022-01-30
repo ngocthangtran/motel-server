@@ -82,4 +82,10 @@ router.delete('/deleteclosing', [
     deleteClosing(req, res);
 })
 
+router.patch("paybill", [
+    auth
+], (req, res) => {
+
+})
+
 module.exports = router;

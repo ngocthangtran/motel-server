@@ -683,10 +683,10 @@ const billDetails = async (req, res) => {
             const {
                 lastValue, currentValue, quantily, price, Service: service
             } = el;
-            const { name: nameService, unit } = service
+            const { name: nameService, unit, icon } = service
 
             return {
-                lastValue, currentValue, quantily, price, nameService, unit,
+                lastValue, currentValue, quantily, price, nameService, unit, icon,
                 intoMoney: lastValue ? (currentValue - lastValue) * parseInt(price) : parseInt(price)
             }
         })
@@ -897,6 +897,10 @@ const notExitBill = async (req, res) => {
     } catch (error) {
         console.log(error)
     }
+}
+
+const payBill = (req, res) => {
+
 }
 
 module.exports = {
