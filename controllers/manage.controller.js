@@ -628,13 +628,14 @@ const getAllBillonMonth = async (req, res) => {
             paid: [],
             unPaid: []
         }
+
         bill.forEach(vl => {
             const { billId, sumPrice, Contract, status } = vl;
             const roomName = Contract.Room.name, buildingName = Contract.Room.Building.name
             if (status === false) {
                 data.unPaid.push({ billId, sumPrice, roomName, buildingName })
             } else {
-                data.Paid.push({ billId, sumPrice, roomName, buildingName })
+                data.paid.push({ billId, sumPrice, roomName, buildingName })
             }
         })
 
@@ -908,9 +909,26 @@ const payBill = async (req, res) => {
             }
         })
         await bill.update({ status: true })
-        res.send(post)
+        res.send(bill)
     } catch (error) {
+        console.log(error)
         res.status(500).send(error)
+    }
+}
+
+const deleteBill = (req, res) => {
+    const { billId } = req.query;
+    try {
+        const result = Bill.destroy({
+            where: {
+                billId
+            }
+        })
+        res.send({
+            message: "complete with billId" + billId
+        })
+    } catch (error) {
+
     }
 }
 
@@ -918,5 +936,5 @@ module.exports = {
     getContractTakeEffect, singleClosing,
     serviceOfRoom,
     createBill, billservice, getAllBillonMonth,
-    billDetails, deleteClosing, notExitBill, payBill
+    billDetails, deleteClosing, notExitBill, payBill, deleteBill
 }

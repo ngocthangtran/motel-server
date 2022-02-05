@@ -1,6 +1,6 @@
 const { application } = require('express');
 const express = require('express');
-const { getContractTakeEffect, singleClosing, serviceOfRoom, createBuild, billservice, createBill, getAllBillonMonth, billDetails, deleteClosing, notExitBill, payBill } = require('../controllers/manage.controller');
+const { getContractTakeEffect, singleClosing, serviceOfRoom, createBuild, billservice, createBill, getAllBillonMonth, billDetails, deleteClosing, notExitBill, payBill, deleteBill } = require('../controllers/manage.controller');
 const auth = require('../middleware/auth');
 const { validateBillId } = require('../middleware/validate/billId');
 const { validateBuildId } = require('../middleware/validate/building');
@@ -80,6 +80,12 @@ router.delete('/deleteclosing', [
 ], (req, res) => {
     console.log(123)
     deleteClosing(req, res);
+})
+
+router.delete('/deletebill', [
+    auth
+], (req, res) => {
+    deleteBill(req, res);
 })
 
 router.patch("/paybill/:billId", [
