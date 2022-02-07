@@ -46,7 +46,7 @@ const getBuilding = async (req, res) => {
                 },
                 include: [{
                     model: Ward,
-                    attributes: ['name'],
+                    attributes: ['name', 'wardId'],
                     include: {
                         model: District,
                         attributes: ['name'],
@@ -59,6 +59,7 @@ const getBuilding = async (req, res) => {
                 order: [['createdAt', 'DESC']],
             }
         )
+        
         const converData = listBuilding.map(item => {
             const building = item.dataValues;
             const { Ward: ward } = building;
@@ -68,7 +69,8 @@ const getBuilding = async (req, res) => {
             return {
                 buildingId: building.buildingId,
                 name: building.name,
-                address
+                address,
+                wardId: ward.wardId
             }
         })
         res.send(converData)
