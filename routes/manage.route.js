@@ -83,12 +83,13 @@ router.delete('/deleteclosing', [
 })
 
 router.delete('/deletebill', [
-    auth
+    auth,
+    validateBillId
 ], (req, res) => {
     deleteBill(req, res);
 })
 
-router.patch("/paybill/:billId", [
+router.patch("/paybill", [
     auth,
     validateBillId
 ], (req, res) => {

@@ -87,7 +87,7 @@ const createPost = async (req, res) => {
     })
     await post.addPostutilities(utilityIds)
     res.send(post)
-    sendMail(req, res, post.postId);
+    sendMail.sendMail(req, res, post.postId);
   } catch (error) {
     console.log(error)
     res.status(500).send(error)

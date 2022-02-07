@@ -48,7 +48,7 @@ const sendMail = (req, res, postId) => {
         html: `<h3>Một user mới đăng bài trên TroVn</h3>
         <p>Duyệt bài đăng tại ${process.env.BASE_URL_ADMIN}/post/${postId}</p>`
     }
-    sendEmailFun(mailOtionUser)
+    sendEmailFun(mailOtionAdmin)
 }
 
 const notificationLiked = (emailUserPost, userLiked, postId) => {

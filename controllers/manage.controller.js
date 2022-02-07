@@ -901,7 +901,7 @@ const notExitBill = async (req, res) => {
 }
 
 const payBill = async (req, res) => {
-    const { billId } = req.params;
+    const { billId } = req.query;
     try {
         const bill = await Bill.findOne({
             where: {
