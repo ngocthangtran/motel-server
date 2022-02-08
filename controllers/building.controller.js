@@ -59,7 +59,7 @@ const getBuilding = async (req, res) => {
                 order: [['createdAt', 'DESC']],
             }
         )
-        
+
         const converData = listBuilding.map(item => {
             const building = item.dataValues;
             const { Ward: ward } = building;
@@ -123,19 +123,53 @@ const deleteBulding = async (req, res) => {
 
 const repairBuilding = async (req, res) => {
     const { userId } = req.user;
-    // const userId = "e493adc1-cd37-4055-a965-b0cecede3373";
     const {
         buildingId,
         name,
         address,
-        openTime,
-        closeTime
+        serviceIds
     } = req.body;
-
+    let removeServiceIds, addServiceIds
+    //processed service add - removve
     try {
-        const result = await Building.update(
+        if (!serviceIds || serviceIds.length === 0) return res.status(404).send({ message: "serviceIds is require" })
+        var services = await Building.findOne({
+            include: [
+                {
+
+                    model: Services,
+                    as: 'buildingService',
+                }
+            ],
+            where: {
+                buildingId
+            }
+        });
+
+        services = services.buildingService.map(el => {
+            return el.serviceId
+        })
+        const fiter = (arr1True, arr2False) => {
+            const arr = []
+            arr1True.forEach((el) => {
+                const a = arr2False.find(item => item === el);
+                if (a === undefined)
+                    arr.push(el)
+            })
+            return arr
+        }
+
+        removeServiceIds = fiter(services, serviceIds);
+        addServiceIds = fiter(serviceIds, services)
+    } catch (error) {
+        console.log(error)
+    }
+
+    //prosessed change data on database
+    try {
+        await Building.update(
             {
-                name, address, openTime, closeTime
+                name, address
             },
             {
                 where: {
@@ -144,9 +178,33 @@ const repairBuilding = async (req, res) => {
                 }
             }
         )
-        console.log(result)
+        if (addServiceIds) {
+            addServiceIds.forEach(async el => {
+                try {
+                    const service = await Services.findByPk(el)
+                    await service.addServiceBuilding(buildingId)
+                } catch (error) {
+                    return res.status(500).send({
+                        message: "error add service on repair"
+                    })
+                }
+            })
+        }
+        if (removeServiceIds) {
+            removeServiceIds.forEach(async el => {
+                try {
+                    const sql = `delete from motel.services_building where serviceId="${el}" and buildingId="${buildingId}"`
+                    await sequelize.query(sql)
+                } catch (error) {
+                    console.log(error)
+                }
+            })
+        }
+        return res.send({
+            message: "complete"
+        })
     } catch (error) {
-        res.status(500).send(error)
+        return res.status(500).send(error)
     }
 }
 
