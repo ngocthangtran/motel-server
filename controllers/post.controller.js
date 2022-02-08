@@ -213,7 +213,6 @@ const viewPost = async (req, res) => {
         {
           model: Utility,
           as: 'postutilities',
-          attributes: ["name", "icon"]
         }, {
           model: User,
           as: 'liked'
@@ -227,6 +226,7 @@ const viewPost = async (req, res) => {
         postId
       }
     })
+    
     const converData = (data, user) => {
       var { postImages, Ward: ward, postutilities, address, liked, User: user } = data[0].dataValues;
 
@@ -250,9 +250,9 @@ const viewPost = async (req, res) => {
       })
 
       postutilities = postutilities.map(item => {
-        const { name, icon } = item
+        const { name, icon, utilityId } = item
         return {
-          name, icon
+          name, icon, utilityId
         }
       })
 
