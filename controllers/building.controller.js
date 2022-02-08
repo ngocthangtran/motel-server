@@ -129,6 +129,8 @@ const repairBuilding = async (req, res) => {
         address,
         serviceIds
     } = req.body;
+    console.log(req.body)
+
     let removeServiceIds, addServiceIds
     //processed service add - removve
     try {

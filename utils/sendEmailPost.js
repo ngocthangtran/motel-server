@@ -32,9 +32,19 @@ const sendMail = (req, res, postId) => {
         to: req.user.email,
         subject: "Chờ xác thực bài đăng TroVN",
         html: `<h3>Cám ơn bạn ${req.user.name} đã tin tưởng và sử dụng phần mềm của chúng tôi!</h3>
-    <p>Bài đăng của bạn đang được các admin kiểm duyệt sẽ và sẽ được đăng trong thời gian sớm nhất.</br>
-    Trong thời gian chờ đợi bạn có thể xem qua các chức năng khác của ứng dụng như quản lý nhà trọ cho bạn.</br>
-    Chức năng đang trong quá trình phát triển và được sử dụng hoàn toàn miễn phí. Hãy góp ý giúp chúng tôi thông quan email này</p>`
+        <p>Phòng hỗ trợ, tư vấn khách hàng của ứng dụng TroVn
+        đã nhận được bài đăng của bạn. Đầu tiên chúng tôi cảm ơn
+        bạn đã tin tưởng vào ứng dụng của chúng tôi để quảng bá
+        nhà trọ của bạn. Bài đăng của bạn đang được phê duyệt
+        trước khi được đưa lên bảng tin hệ thống. Chúng tôi
+        rất xin lỗi về sự bất tiện này, nhưng để giữ được sự uy tín
+        của ứng dụng việc này là cần thiết. Mã bài đăng của bạn là: ${postId}</p>
+        <p>Bạn vui lòng liên hệ với quản trị viên nếu bài viết của bạn 
+        là hợp lý mà chưa được duyệt. Xin chân thành cảm ơn!</p>
+        <p>THÔNG TIN LIÊN HỆ HỖ TRỢ</p>
+        <p>PHONE: 0983349999 (MR.Long)</p>
+        <p>Zalo: 0983349999 (LONG HOANG)</p>
+        <p>Chức năng đang trong quá trình phát triển và được sử dụng hoàn toàn miễn phí. Hãy góp ý giúp chúng tôi thông quan email này</p>`
     }
     sendEmailFun(mailOtionUser)
 
