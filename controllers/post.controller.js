@@ -200,7 +200,7 @@ const viewPost = async (req, res) => {
         },
         {
           model: Ward,
-          attributes: ["name"],
+          attributes: ["name", "wardId"],
           include: {
             model: District,
             attributes: ["name"],
@@ -226,7 +226,7 @@ const viewPost = async (req, res) => {
         postId
       }
     })
-    
+
     const converData = (data, user) => {
       var { postImages, Ward: ward, postutilities, address, liked, User: user } = data[0].dataValues;
 
@@ -268,6 +268,7 @@ const viewPost = async (req, res) => {
         ...data[0].dataValues,
         userPostName: user.name,
         userPostImage: user.avatar,
+        wardId: ward.wardId,
         address, ward: ward.name, district: ward.District.name, province: ward.District.Province.name,
         postImages: images, utility: postutilities, like
       }
