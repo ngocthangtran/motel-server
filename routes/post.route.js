@@ -77,6 +77,9 @@ router.post('/repair/:postId',
     auth,
     upload.array('images', MAX_IMAGE_COUNT),
     imageResize,
+    validateRoomTypeId,
+    validateWardId,
+    validateUtilityIds,
     validatePostId
   ], (req, res) => {
     repairPost(req, res);

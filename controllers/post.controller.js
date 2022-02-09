@@ -569,7 +569,8 @@ const getPostForUser = async (req, res) => {
 }
 
 const repairPost = async (req, res) => {
-  const { postId } = req.params
+  const { postId } = req.params;
+  const { userId } = req.user;
   const {
     postType,
     area,
@@ -587,6 +588,78 @@ const repairPost = async (req, res) => {
     longitude,
     utilityIds
   } = req.body;
+
+  const fiter = (arr1True, arr2False) => {
+    const arr = []
+    arr1True.forEach((el) => {
+      const a = arr2False.find(item => item === el);
+      if (a === undefined)
+        arr.push(el)
+    })
+    return arr
+  }
+
+  // prosessed repaird image
+  let removeImage;
+  try {
+    var oldImage = await Posts.findOne({
+      include: [
+        {
+          attributes: ["name"],
+          model: PostImage,
+          as: 'postImages'
+        }
+      ],
+      where: {
+        postId, userId
+      }
+    })
+    oldImage = oldImage.postImages.map(el => {
+      return el.name
+    })
+    var imagesOld = req.body.imagesOld;
+    if (imagesOld) {
+      if (typeof (imagesOld) === "string") {
+        imagesOld = [imagesOld]
+      }
+      imagesOld = imagesOld.map(el => {
+        var item = el.split('/');
+        item = item[item.length - 1];
+        return item.split('_')[0];
+      })
+      removeImage = fiter(oldImage, imagesOld)
+    } else {
+      removeImage = oldImage
+    }
+  } catch (error) {
+    console.log("error on handiing repair images")
+    return res.status(500).send({ message: "error on prosessing utilities" })
+  }
+
+  // prosessing repair utilityIds
+  let addUtilities, removeUtilities
+  try {
+    var utilities = await Posts.findOne({
+      include: [
+        {
+          model: Utility,
+          as: 'postutilities',
+        }
+      ],
+      where: {
+        postId, userId
+      }
+    })
+    utilities = utilities.postutilities.map(el => {
+      return el.utilityId
+    })
+    removeUtilities = fiter(utilities, utilityIds)
+    addUtilities = fiter(utilityIds, utilities)
+  } catch (error) {
+    console.log("error on prosessing utilities");
+    return res.status(500).send({ message: "error on prosessing utilities" })
+  }
+  // prosessing data on database
   const images = req.images.map(i => {
     return {
       name: i, postId
@@ -618,7 +691,7 @@ const repairPost = async (req, res) => {
     if (images.length !== 0) {
       await PostImage.bulkCreate(images)
     }
-    if (utilityIds.length !== 0) {
+    if (addUtilities.length !== 0) {
       const post = await Posts.findOne({
         include: ['postutilities', 'postImages'],
         where: {
@@ -628,11 +701,33 @@ const repairPost = async (req, res) => {
       })
       await post.addPostutilities(utilityIds)
     }
+
+
+    // delete utilities
+    if (removeUtilities.length !== 0) {
+      try {
+        removeUtilities.forEach(async el => {
+          await sequelize.query(`delete from motel.posts_utilities where postId="${postId}" and utilityId="${el}"`)
+        })
+      } catch (error) {
+        console.log("err on delete utilities")
+      }
+    }
+    // delete images
+    if (removeImage.length !== 0) {
+      removeImage.forEach(async el => {
+        await PostImage.destroy({
+          where: {
+            name: el,
+            postId
+          }
+        })
+      })
+    }
     res.send({
       status: 200,
       message: "reqair post complete with postId: " + postId
     })
-
   } catch (error) {
     console.log(error)
     res.status(500).send(error)
