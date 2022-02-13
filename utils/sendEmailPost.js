@@ -69,10 +69,18 @@ const notificationLiked = (emailUserPost, userLiked, postId) => {
         from: account.user,
         to: emailUserPost,
         subject: `Người dùng quan tâm bài đăng`,
-        html: `<h3>Người dùng ${userLiked.name} quan tâm đến bài đăng của bạn</h3>
-        <p>Xem bài đăng tại ${process.env.BASE_URL_ADMIN}/post/${postId}</p>
+        html: `<h3>Người dùng ${userLiked.name} đã quan tâm đến bài đăng của bạn</h3>
+        <p>Bài đăng của bạn trên TroVn vừa được người dùng ${userLiked.name} quan
+        tâm đến. Email này được gửi đến bạn với mục đích để bạn có thể 
+        chủ động liên hệ tư vấn cho người vị khách đó để có tỉ lệ 
+        thuê tăng lên một cách nhanh chóng.</p>
         <p>Tên người quan tâm: ${userLiked.name}</p>
-        <p>Email người quan tâm: ${userLiked.email}</p>
+        <p>Email: ${userLiked.email}</p>
+        <p>SDT: ${userLiked.phone ? userLiked.phone : "Chưa có thông tin"}</p>
+        <p>Bạn có thể xem bài đăng của bạn theo đường link: ${process.env.BASE_URL_ADMIN}/post/${postId} </p>
+        <p>THÔNG TIN LIÊN HỆ HỖ TRỢ</p>
+        <p>PHONE: 0983349999 (MR.Long)</p>
+        <p>Zalo: 0983349999 (LONG HOANG)</p>
         `
     }
     sendEmailFun(mailOption)
