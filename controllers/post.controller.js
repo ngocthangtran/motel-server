@@ -995,6 +995,42 @@ const browsePosts = async (req, res) => {
   }
 }
 
+const getAllPost = async (req, res) => {
+  const { page, status } = req.query;
+  try {
+    const post = await Posts.findAndCountAll({
+      attributes: ["postId", "phone", "title"],
+      include: [
+        {
+          model: Ward,
+          include: {
+            model: District,
+            include: Province
+          }
+        }
+      ],
+      where: {
+        status: status === "true" ? true : false
+      },
+      order: [['createdAt', 'DESC']],
+      offset: page ? page * 10 - 10 : 1,
+      limit: 10
+    })
+    const data = post.rows.map(el => {
+      const { postId, phone, title, Ward: ward } = el
+      return {
+        postId, phone, title, address: `${ward.name}, ${ward.District.name}, ${ward.District.Province.name}`
+      }
+    })
+    res.send({
+      page: ((post.count - post.count % 10) / 10) + 1,
+      data
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 const test = async (req, res) => {
   console.log(req.user)
 }
@@ -1005,5 +1041,5 @@ module.exports = {
   getPostForUser, deletePost, liked,
   repairPost, deleteImagePost,
   deleteUtilitie, test, unLike, getPostUserLike,
-  findLocation, findPostV2, browsePosts
+  findLocation, findPostV2, browsePosts, getAllPost
 };
