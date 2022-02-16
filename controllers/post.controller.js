@@ -997,6 +997,7 @@ const browsePosts = async (req, res) => {
 
 const getAllPost = async (req, res) => {
   const { page, status } = req.query;
+  const countItem = 5;
   try {
     const post = await Posts.findAndCountAll({
       attributes: ["postId", "phone", "title"],
@@ -1013,8 +1014,8 @@ const getAllPost = async (req, res) => {
         status: status === "true" ? true : false
       },
       order: [['createdAt', 'DESC']],
-      offset: page ? page * 10 - 10 : 1,
-      limit: 10
+      offset: page ? page * countItem - countItem : 1,
+      limit: countItem
     })
     const data = post.rows.map(el => {
       const { postId, phone, title, Ward: ward } = el
@@ -1023,7 +1024,7 @@ const getAllPost = async (req, res) => {
       }
     })
     res.send({
-      page: ((post.count - post.count % 10) / 10) + 1,
+      page: ((post.count - post.count % countItem) / countItem) + 1,
       data
     })
   } catch (error) {
