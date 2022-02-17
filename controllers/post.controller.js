@@ -999,8 +999,14 @@ const getAllPost = async (req, res) => {
   const { page, status } = req.query;
   const countItem = 5;
   try {
+    const sum = await Posts.count();
+    const acceptance = await Posts.count({
+      where: {
+        status: true
+      }
+    })
     const post = await Posts.findAndCountAll({
-      attributes: ["postId", "phone", "title"],
+      attributes: ["postId", "phone", "title", "status"],
       include: [
         {
           model: Ward,
@@ -1011,21 +1017,24 @@ const getAllPost = async (req, res) => {
         }
       ],
       where: {
-        status: status === "true" ? true : false
+        status: status && status === "true" ? true : false
       },
       order: [['createdAt', 'DESC']],
       offset: page ? page * countItem - countItem : 1,
       limit: countItem
     })
     const data = post.rows.map(el => {
-      const { postId, phone, title, Ward: ward } = el
+      const { postId, phone, title, Ward: ward, status } = el
       return {
-        postId, phone, title, address: `${ward.name}, ${ward.District.name}, ${ward.District.Province.name}`
+        postId, phone, title, address: `${ward.name}, ${ward.District.name}, ${ward.District.Province.name}`, status
       }
     })
     res.send({
       page: ((post.count - post.count % countItem) / countItem) + 1,
-      data
+      sum,
+      acceptance,
+      unAcceptance: sum - acceptance,
+      data,
     })
   } catch (error) {
     console.log(error)
